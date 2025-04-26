@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import TreeNode from './TreeNode';
 
-// Define the central state type for tracking expanded nodes
+// Define the central state type for tracking expanded nodes and text content
 interface ExpandedState {
   [key: string]: {
     isExpanded: boolean;
@@ -10,13 +9,20 @@ interface ExpandedState {
   };
 }
 
+interface TextState {
+  [key: string]: string;
+}
+
 const TreeViewer = () => {
-  // Central state to track expanded nodes throughout the entire tree
   const [expandedState, setExpandedState] = useState<ExpandedState>({
     'root': { isExpanded: false, children: {} }
   });
+  
+  // Add state for text content
+  const [textState, setTextState] = useState<TextState>({
+    'root': 'Root'
+  });
 
-  // Function to toggle node expansion
   const toggleNodeExpansion = (nodePath: string, value?: boolean) => {
     setExpandedState(prevState => {
       const newState = { ...prevState };
@@ -34,12 +40,10 @@ const TreeViewer = () => {
     });
   };
 
-  // Function to check if a node is expanded
   const isNodeExpanded = (nodePath: string): boolean => {
     return !!expandedState[nodePath]?.isExpanded;
   };
 
-  // Function to track child node state
   const updateChildState = (parentPath: string, childKey: string, expanded: boolean) => {
     setExpandedState(prevState => {
       const newState = { ...prevState };
@@ -59,17 +63,31 @@ const TreeViewer = () => {
     });
   };
 
+  // Add function to update text content
+  const updateNodeText = (nodePath: string, text: string) => {
+    setTextState(prevState => ({
+      ...prevState,
+      [nodePath]: text
+    }));
+  };
+
+  // Function to get text content for a node
+  const getNodeText = (nodePath: string): string => {
+    return textState[nodePath] || `Node ${nodePath}`;
+  };
+
   return (
     <div className="w-full overflow-x-auto p-8 bg-[#F1F0FB] min-h-screen">
       <div className="min-w-max">
         <TreeNode 
-          text="Root" 
+          text={getNodeText("root")}
           nodePath="root"
           depth={1} 
           isExpanded={isNodeExpanded("root")}
           toggleExpansion={() => toggleNodeExpansion("root")}
           updateChildState={(childKey, expanded) => updateChildState("root", childKey, expanded)}
           getChildState={(childKey) => !!expandedState["root"]?.children[childKey]}
+          onTextChange={(text) => updateNodeText("root", text)}
         />
       </div>
     </div>
