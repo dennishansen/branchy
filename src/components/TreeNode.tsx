@@ -13,6 +13,7 @@ interface TreeNodeProps {
   toggleExpansion: () => void;
   updateChildState: (childKey: string, expanded: boolean) => void;
   getChildState: (childKey: string) => boolean;
+  onTextChange: (text: string) => void;
 }
 
 const TreeNode: React.FC<TreeNodeProps> = ({
@@ -22,7 +23,8 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   isExpanded,
   toggleExpansion,
   updateChildState,
-  getChildState
+  getChildState,
+  onTextChange
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -43,8 +45,9 @@ const TreeNode: React.FC<TreeNodeProps> = ({
     autoResize();
   }, [text]);
 
-  const handleInput = () => {
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     autoResize();
+    onTextChange(e.target.value);
   };
   
   return (
@@ -52,8 +55,8 @@ const TreeNode: React.FC<TreeNodeProps> = ({
       <div className="flex items-center gap-2 min-w-[200px]">
         <Textarea 
           ref={textareaRef}
-          defaultValue={text}
-          onInput={handleInput}
+          value={text}
+          onChange={handleInput}
           className="resize-none overflow-hidden min-h-[40px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           placeholder="Enter text..."
         />
@@ -106,6 +109,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
                   getChildState={(grandchildKey) => 
                     getChildState(`${childKey}.${grandchildKey}`)
                   }
+                  onTextChange={(newText) => onTextChange(`${childKey}:${newText}`)}
                 />
               );
             })}
