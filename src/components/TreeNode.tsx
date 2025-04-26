@@ -12,6 +12,7 @@ interface TreeNodeProps {
 export interface TreeNodeRef {
   isExpanded: boolean;
   expand: (value: boolean) => void;
+  getChildState: () => boolean[];
 }
 
 const TreeNode: React.FC<TreeNodeProps> = ({ text, depth }) => {
@@ -44,12 +45,24 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth }) => {
     setIsExpanded(value);
   };
   
-  // Create a ref that will be used with useImperativeHandle
-  // We don't actually use this ref in this component, but we need it for the hook
-  const nodeRef = useRef<TreeNodeRef>(null);
+  // Method that gets the child states for deeper preservation
+  const getChildState = () => {
+    return childNodes.map(node => node.expanded);
+  };
   
-  // Expose methods to parent through ref - but since we're not using forwardRef,
-  // this won't actually do anything in the current implementation
+  // When parent expands this node, recursively restore child states
+  useEffect(() => {
+    if (isExpanded) {
+      // When expanding, propagate the expanded state to children that were previously expanded
+      childNodes.forEach((child, idx) => {
+        if (child.expanded && child.ref.current) {
+          child.ref.current.expand(true);
+        }
+      });
+    }
+  }, [isExpanded, childNodes]);
+  
+  // Log for debugging
   useEffect(() => {
     console.log(`${text} rendered, expanded: ${isExpanded}, childStates:`, 
       childNodes.map(c => c.expanded));
@@ -84,6 +97,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth }) => {
               index={index}
               isInitiallyExpanded={childNodes[index].expanded}
               onExpandChange={(expanded) => updateChildState(index, expanded)}
+              ref={childNodes[index].ref}
             />
           ))}
         </div>
@@ -120,7 +134,19 @@ const ChildTreeNode = forwardRef<TreeNodeRef, ChildTreeNodeProps>(({
     isExpanded,
     expand: (value: boolean) => {
       setIsExpanded(value);
-    }
+      
+      // When expanding, recursively restore child states for deep preservation
+      if (value) {
+        setTimeout(() => {
+          childNodes.forEach((child, idx) => {
+            if (child.expanded && child.ref.current) {
+              child.ref.current.expand(true);
+            }
+          });
+        }, 0);
+      }
+    },
+    getChildState: () => childNodes.map(node => node.expanded)
   }));
   
   // Notify parent when our expanded state changes
@@ -141,6 +167,18 @@ const ChildTreeNode = forwardRef<TreeNodeRef, ChildTreeNodeProps>(({
       return updated;
     });
   };
+  
+  // When parent expands this node, recursively restore child states
+  useEffect(() => {
+    if (isExpanded) {
+      // When expanding, propagate the expanded state to children that were previously expanded
+      childNodes.forEach((child, idx) => {
+        if (child.expanded && child.ref.current) {
+          child.ref.current.expand(true);
+        }
+      });
+    }
+  }, [isExpanded, childNodes]);
 
   return (
     <div className="flex items-start gap-4">
@@ -171,6 +209,7 @@ const ChildTreeNode = forwardRef<TreeNodeRef, ChildTreeNodeProps>(({
               index={childIndex}
               isInitiallyExpanded={childNodes[childIndex].expanded}
               onExpandChange={(expanded) => updateChildState(childIndex, expanded)}
+              ref={childNodes[childIndex].ref}
             />
           ))}
         </div>
