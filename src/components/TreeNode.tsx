@@ -45,6 +45,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   }, [text]);
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    console.log(`Text input changed for node ${nodePath}: ${e.target.value}`);
     autoResize();
     onTextChange(e.target.value);
   };
@@ -108,7 +109,10 @@ const TreeNode: React.FC<TreeNodeProps> = ({
                   getChildState={(grandchildKey) => 
                     getChildState(`${childKey}.${grandchildKey}`)
                   }
-                  onTextChange={(newText) => onTextChange(`${childPath}=${newText}`)}
+                  onTextChange={(newText) => {
+                    console.log(`Child node text changed: ${childPath} -> ${newText}`);
+                    onTextChange(newText);
+                  }}
                 />
               );
             })}

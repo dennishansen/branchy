@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TreeNode from './TreeNode';
 
 // Define the central state type for tracking expanded nodes and text content
@@ -23,6 +23,11 @@ const TreeViewer = () => {
   const [textState, setTextState] = useState<TextState>({
     'root': 'Root'
   });
+
+  // Debug: Log the text state whenever it changes
+  useEffect(() => {
+    console.log("Text state updated:", textState);
+  }, [textState]);
 
   const toggleNodeExpansion = (nodePath: string, value?: boolean) => {
     setExpandedState(prevState => {
@@ -66,6 +71,8 @@ const TreeViewer = () => {
 
   // Update function to handle text content properly
   const updateNodeText = (nodePath: string, text: string) => {
+    console.log(`Updating node text for path: "${nodePath}" to "${text}"`);
+    
     setTextState(prevState => ({
       ...prevState,
       [nodePath]: text
@@ -74,6 +81,7 @@ const TreeViewer = () => {
 
   // Function to get text content for a node
   const getNodeText = (nodePath: string): string => {
+    console.log(`Getting text for node: "${nodePath}". Current value: "${textState[nodePath] || `Node ${nodePath.split('.').pop()}`}"`);
     return textState[nodePath] || `Node ${nodePath.split('.').pop()}`;
   };
 
