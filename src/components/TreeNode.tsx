@@ -10,6 +10,7 @@ interface TreeNodeProps {
 
 const TreeNode: React.FC<TreeNodeProps> = ({ text, depth }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [childStates] = useState<boolean[]>(Array(5).fill(false));
 
   const handleClick = () => {
     setIsExpanded(!isExpanded);
