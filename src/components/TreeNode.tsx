@@ -3,6 +3,7 @@ import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Textarea } from '@/components/ui/textarea';
 
 interface TreeNodeProps {
   text: string;
@@ -29,25 +30,30 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   
   return (
     <div className="flex items-start gap-4">
-      <motion.button
-        onClick={handleClick}
-        className={cn(
-          "flex items-center gap-2 px-4 py-2 rounded-lg",
-          "bg-[#9b87f5] hover:bg-[#8B5CF6] text-white shadow-sm",
-          "relative group"
-        )}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-      >
-        <span>{text}</span>
-        <motion.div
-          initial={false}
-          animate={{ rotate: isExpanded ? 90 : 0 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
+      <div className="flex items-center gap-2 min-w-[200px]">
+        <Textarea 
+          defaultValue={text}
+          className="resize-none overflow-hidden min-h-[40px] bg-[#9b87f5] hover:bg-[#8B5CF6] text-white placeholder:text-white/70"
+          placeholder="Enter text..."
+        />
+        <motion.button
+          onClick={handleClick}
+          className={cn(
+            "p-2 rounded-lg bg-[#9b87f5] hover:bg-[#8B5CF6] text-white",
+            "flex items-center justify-center"
+          )}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <ChevronRight className="w-4 h-4" />
-        </motion.div>
-      </motion.button>
+          <motion.div
+            initial={false}
+            animate={{ rotate: isExpanded ? 90 : 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+          >
+            <ChevronRight className="w-4 h-4" />
+          </motion.div>
+        </motion.button>
+      </div>
       
       <AnimatePresence>
         {isExpanded && (
