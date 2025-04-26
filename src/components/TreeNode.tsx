@@ -1,9 +1,8 @@
-
-import React, { useRef, useEffect } from 'react';
-import { ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Textarea } from '@/components/ui/textarea';
+import React, { useRef, useEffect } from "react";
+import { ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
+import { Textarea } from "@/components/ui/textarea";
 
 interface TreeNodeProps {
   text: string;
@@ -13,7 +12,8 @@ interface TreeNodeProps {
   toggleExpansion: () => void;
   updateChildState: (childKey: string, expanded: boolean) => void;
   getChildState: (childKey: string) => boolean;
-  onTextChange: (text: string) => void;
+  onTextChange: (nodePath: string, text: string) => void;
+  getNodeText?: (nodePath: string) => string;
 }
 
 const TreeNode: React.FC<TreeNodeProps> = ({
@@ -24,7 +24,8 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   toggleExpansion,
   updateChildState,
   getChildState,
-  onTextChange
+  onTextChange,
+  getNodeText,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -36,7 +37,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   const autoResize = () => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = 'auto';
+      textarea.style.height = "auto";
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
   };
@@ -47,13 +48,13 @@ const TreeNode: React.FC<TreeNodeProps> = ({
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     autoResize();
-    onTextChange(e.target.value);
+    onTextChange(nodePath, e.target.value);
   };
-  
+
   return (
     <div className="flex items-start gap-4">
       <div className="flex items-center gap-2 min-w-[200px]">
-        <Textarea 
+        <Textarea
           ref={textareaRef}
           value={text}
           onChange={handleInput}
@@ -78,7 +79,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
           </motion.div>
         </motion.button>
       </div>
-      
+
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -92,24 +93,24 @@ const TreeNode: React.FC<TreeNodeProps> = ({
               const childKey = `${index}`;
               const childPath = `${nodePath}.${childKey}`;
               const childIsExpanded = getChildState(childKey);
-              
+              const childText = getNodeText ? getNodeText(childPath) : `Node ${depth}.${index + 1}`;
+
               return (
                 <TreeNode
                   key={childPath}
-                  text={`Node ${depth}.${index + 1}`}
+                  text={childText}
                   nodePath={childPath}
                   depth={depth + 1}
                   isExpanded={childIsExpanded}
                   toggleExpansion={() => {
                     updateChildState(childKey, !childIsExpanded);
                   }}
-                  updateChildState={(grandchildKey, expanded) => 
+                  updateChildState={(grandchildKey, expanded) =>
                     updateChildState(`${childKey}.${grandchildKey}`, expanded)
                   }
-                  getChildState={(grandchildKey) => 
-                    getChildState(`${childKey}.${grandchildKey}`)
-                  }
-                  onTextChange={(newText) => onTextChange(`${childKey}:${newText}`)}
+                  getChildState={(grandchildKey) => getChildState(`${childKey}.${grandchildKey}`)}
+                  onTextChange={onTextChange}
+                  getNodeText={getNodeText}
                 />
               );
             })}

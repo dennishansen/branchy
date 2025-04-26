@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import TreeNode from './TreeNode';
+import React, { useState } from "react";
+import TreeNode from "./TreeNode";
 
 // Define the node data structure for more comprehensive state tracking
 interface NodeData {
@@ -17,11 +16,11 @@ interface TreeState {
 const TreeViewer = () => {
   // Unified state to track all node data
   const [treeState, setTreeState] = useState<TreeState>({
-    'root': { 
-      text: 'Root',
+    root: {
+      text: "Root",
       isExpanded: false,
-      children: {}
-    }
+      children: {},
+    },
   });
 
   // Function to get node text
@@ -31,25 +30,25 @@ const TreeViewer = () => {
 
   // Function to update node text
   const updateNodeText = (nodePath: string, text: string) => {
-    setTreeState(prevState => {
+    setTreeState((prevState) => {
       // Create a new state object
       const newState = { ...prevState };
-      
+
       // Initialize node if it doesn't exist
       if (!newState[nodePath]) {
         newState[nodePath] = {
           text: text,
           isExpanded: false,
-          children: {}
+          children: {},
         };
       } else {
         // Update the text for the existing node
         newState[nodePath] = {
           ...newState[nodePath],
-          text: text
+          text: text,
         };
       }
-      
+
       console.log(`Updated text for node ${nodePath}: ${text}`);
       return newState;
     });
@@ -57,24 +56,24 @@ const TreeViewer = () => {
 
   // Function to toggle node expansion
   const toggleNodeExpansion = (nodePath: string, value?: boolean) => {
-    setTreeState(prevState => {
+    setTreeState((prevState) => {
       const newState = { ...prevState };
-      
+
       // Initialize node if it doesn't exist
       if (!newState[nodePath]) {
         newState[nodePath] = {
           text: getNodeText(nodePath),
           isExpanded: value !== undefined ? value : true,
-          children: {}
+          children: {},
         };
       } else {
         // Update expansion state
         newState[nodePath] = {
           ...newState[nodePath],
-          isExpanded: value !== undefined ? value : !newState[nodePath].isExpanded
+          isExpanded: value !== undefined ? value : !newState[nodePath].isExpanded,
         };
       }
-      
+
       console.log(`Node ${nodePath} set to ${newState[nodePath].isExpanded}`);
       return newState;
     });
@@ -87,27 +86,27 @@ const TreeViewer = () => {
 
   // Function to track child node state
   const updateChildState = (parentPath: string, childKey: string, expanded: boolean) => {
-    setTreeState(prevState => {
+    setTreeState((prevState) => {
       const newState = { ...prevState };
-      
+
       // Ensure parent entry exists
       if (!newState[parentPath]) {
         newState[parentPath] = {
           text: getNodeText(parentPath),
           isExpanded: false,
-          children: {}
+          children: {},
         };
       }
-      
+
       // Update the child tracking
       newState[parentPath] = {
         ...newState[parentPath],
         children: {
           ...newState[parentPath].children,
-          [childKey]: expanded
-        }
+          [childKey]: expanded,
+        },
       };
-      
+
       return newState;
     });
   };
@@ -120,15 +119,16 @@ const TreeViewer = () => {
   return (
     <div className="w-full overflow-x-auto p-8 bg-[#F1F0FB] min-h-screen">
       <div className="min-w-max">
-        <TreeNode 
+        <TreeNode
           text={getNodeText("root")}
           nodePath="root"
-          depth={1} 
+          depth={1}
           isExpanded={isNodeExpanded("root")}
           toggleExpansion={() => toggleNodeExpansion("root")}
           updateChildState={(childKey, expanded) => updateChildState("root", childKey, expanded)}
           getChildState={(childKey) => getChildState("root", childKey)}
-          onTextChange={(text) => updateNodeText("root", text)}
+          onTextChange={updateNodeText}
+          getNodeText={getNodeText}
         />
       </div>
     </div>
