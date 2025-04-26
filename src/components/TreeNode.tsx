@@ -13,7 +13,7 @@ interface TreeNodeProps {
   toggleExpansion: () => void;
   updateChildState: (childKey: string, expanded: boolean) => void;
   getChildState: (childKey: string) => boolean;
-  onTextChange: (text: string) => void;
+  onTextChange: (text: string, nodePath: string) => void;
 }
 
 const TreeNode: React.FC<TreeNodeProps> = ({
@@ -47,7 +47,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     console.log(`Text input changed for node ${nodePath}: ${e.target.value}`);
     autoResize();
-    onTextChange(e.target.value);
+    onTextChange(e.target.value, nodePath);
   };
   
   return (
@@ -109,10 +109,10 @@ const TreeNode: React.FC<TreeNodeProps> = ({
                   getChildState={(grandchildKey) => 
                     getChildState(`${childKey}.${grandchildKey}`)
                   }
-                  onTextChange={(newText) => {
-                    console.log(`Child node text changed: ${childPath} -> ${newText}`);
-                    // Important: Pass the FULL node path for text update
-                    onTextChange(newText);
+                  onTextChange={(newText, nodePath) => {
+                    console.log(`Child node text changed: ${nodePath} -> ${newText}`);
+                    // Pass both the text and the node path up the tree
+                    onTextChange(newText, nodePath);
                   }}
                 />
               );

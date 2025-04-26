@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import TreeNode from './TreeNode';
 
@@ -67,7 +68,7 @@ const TreeViewer = () => {
     });
   };
 
-  // Improved update function to handle text content for specific nodes
+  // Updated function to handle text content for specific nodes
   const updateNodeText = (nodePath: string, text: string) => {
     console.log(`Updating node text for path: "${nodePath}" to "${text}"`);
     
@@ -79,8 +80,16 @@ const TreeViewer = () => {
 
   // Function to get text content for a node
   const getNodeText = (nodePath: string): string => {
-    console.log(`Getting text for node: "${nodePath}". Current value: "${textState[nodePath] || `Node ${nodePath.split('.').pop()}`}"`);
-    return textState[nodePath] || `Node ${nodePath.split('.').pop()}`;
+    const nodeText = textState[nodePath];
+    if (nodeText) {
+      console.log(`Getting text for node: "${nodePath}". Current value: "${nodeText}"`);
+      return nodeText;
+    }
+    
+    // If there's no specific text yet, generate a default
+    const defaultText = nodePath === 'root' ? 'Root' : `Node ${nodePath.split('.').pop()}`;
+    console.log(`Getting default text for node: "${nodePath}". Default value: "${defaultText}"`);
+    return defaultText;
   };
 
   return (
@@ -94,7 +103,7 @@ const TreeViewer = () => {
           toggleExpansion={() => toggleNodeExpansion("root")}
           updateChildState={(childKey, expanded) => updateChildState("root", childKey, expanded)}
           getChildState={(childKey) => !!expandedState["root"]?.children[childKey]}
-          onTextChange={(text) => updateNodeText("root", text)}
+          onTextChange={(text, nodePath) => updateNodeText(nodePath, text)}
         />
       </div>
     </div>
