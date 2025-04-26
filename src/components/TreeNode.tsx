@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,16 +24,37 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   updateChildState,
   getChildState
 }) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const handleClick = () => {
     toggleExpansion();
+  };
+
+  // Auto-resize textarea based on content
+  const autoResize = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  };
+
+  useEffect(() => {
+    autoResize();
+  }, [text]);
+
+  const handleInput = () => {
+    autoResize();
   };
   
   return (
     <div className="flex items-start gap-4">
       <div className="flex items-center gap-2 min-w-[200px]">
         <Textarea 
+          ref={textareaRef}
           defaultValue={text}
-          className="resize-none overflow-hidden min-h-[40px] bg-[#9b87f5] hover:bg-[#8B5CF6] text-white placeholder:text-white/70"
+          onInput={handleInput}
+          className="resize-none overflow-hidden min-h-[40px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           placeholder="Enter text..."
         />
         <motion.button
