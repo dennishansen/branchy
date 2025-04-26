@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import TreeNode from './TreeNode';
 import { Input } from '@/components/ui/input';
 import { Toggle } from '@/components/ui/toggle';
+import { cn } from '@/lib/utils';
 
 // Define the central state type for tracking expanded nodes
 interface ExpandedState {
