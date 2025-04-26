@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import TreeNode from './TreeNode';
 
@@ -63,7 +64,7 @@ const TreeViewer = () => {
     });
   };
 
-  // Add function to update text content
+  // Update function to handle text content properly
   const updateNodeText = (nodePath: string, text: string) => {
     setTextState(prevState => ({
       ...prevState,
@@ -73,7 +74,7 @@ const TreeViewer = () => {
 
   // Function to get text content for a node
   const getNodeText = (nodePath: string): string => {
-    return textState[nodePath] || `Node ${nodePath}`;
+    return textState[nodePath] || `Node ${nodePath.split('.').pop()}`;
   };
 
   return (

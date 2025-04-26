@@ -108,7 +108,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
                   getChildState={(grandchildKey) => 
                     getChildState(`${childKey}.${grandchildKey}`)
                   }
-                  onTextChange={(newText) => onTextChange(`${childKey}.${newText}`)}
+                  onTextChange={(newText) => onTextChange(`${childPath}=${newText}`)}
                 />
               );
             })}
