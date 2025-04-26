@@ -1,8 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import TreeNode from './TreeNode';
 
-// Define the central state type for tracking expanded nodes and text content
+// Define the central state type for tracking expanded nodes
 interface ExpandedState {
   [key: string]: {
     isExpanded: boolean;
@@ -10,24 +10,13 @@ interface ExpandedState {
   };
 }
 
-interface TextState {
-  [key: string]: string;
-}
-
 const TreeViewer = () => {
+  // Central state to track expanded nodes throughout the entire tree
   const [expandedState, setExpandedState] = useState<ExpandedState>({
     'root': { isExpanded: false, children: {} }
   });
-  
-  const [textState, setTextState] = useState<TextState>({
-    'root': 'Root'
-  });
 
-  // Debug: Log the text state whenever it changes
-  useEffect(() => {
-    console.log("Text state updated:", textState);
-  }, [textState]);
-
+  // Function to toggle node expansion
   const toggleNodeExpansion = (nodePath: string, value?: boolean) => {
     setExpandedState(prevState => {
       const newState = { ...prevState };
@@ -45,10 +34,12 @@ const TreeViewer = () => {
     });
   };
 
+  // Function to check if a node is expanded
   const isNodeExpanded = (nodePath: string): boolean => {
     return !!expandedState[nodePath]?.isExpanded;
   };
 
+  // Function to track child node state
   const updateChildState = (parentPath: string, childKey: string, expanded: boolean) => {
     setExpandedState(prevState => {
       const newState = { ...prevState };
@@ -68,42 +59,17 @@ const TreeViewer = () => {
     });
   };
 
-  // Updated function to handle text content for specific nodes
-  const updateNodeText = (nodePath: string, text: string) => {
-    console.log(`Updating node text for path: "${nodePath}" to "${text}"`);
-    
-    setTextState(prevState => ({
-      ...prevState,
-      [nodePath]: text
-    }));
-  };
-
-  // Function to get text content for a node
-  const getNodeText = (nodePath: string): string => {
-    const nodeText = textState[nodePath];
-    if (nodeText) {
-      console.log(`Getting text for node: "${nodePath}". Current value: "${nodeText}"`);
-      return nodeText;
-    }
-    
-    // If there's no specific text yet, generate a default
-    const defaultText = nodePath === 'root' ? 'Root' : `Node ${nodePath.split('.').pop()}`;
-    console.log(`Getting default text for node: "${nodePath}". Default value: "${defaultText}"`);
-    return defaultText;
-  };
-
   return (
     <div className="w-full overflow-x-auto p-8 bg-[#F1F0FB] min-h-screen">
       <div className="min-w-max">
         <TreeNode 
-          text={getNodeText("root")}
+          text="Root" 
           nodePath="root"
           depth={1} 
           isExpanded={isNodeExpanded("root")}
           toggleExpansion={() => toggleNodeExpansion("root")}
           updateChildState={(childKey, expanded) => updateChildState("root", childKey, expanded)}
           getChildState={(childKey) => !!expandedState["root"]?.children[childKey]}
-          onTextChange={(text, nodePath) => updateNodeText(nodePath, text)}
         />
       </div>
     </div>
