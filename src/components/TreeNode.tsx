@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -8,13 +8,19 @@ interface TreeNodeProps {
   depth: number;
 }
 
+// Define the ref type for TreeNode
+export interface TreeNodeRef {
+  isExpanded: boolean;
+  expand: (value: boolean) => void;
+}
+
 const TreeNode: React.FC<TreeNodeProps> = ({ text, depth }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   // Store both expanded state and references to child nodes
-  const [childNodes, setChildNodes] = useState<{expanded: boolean, ref: React.RefObject<{isExpanded: boolean, expand: (value: boolean) => void}>}[]>(
+  const [childNodes, setChildNodes] = useState<{expanded: boolean, ref: React.RefObject<TreeNodeRef>}[]>(
     Array(5).fill(null).map(() => ({
       expanded: false,
-      ref: React.createRef()
+      ref: React.createRef<TreeNodeRef>()
     }))
   );
   
@@ -38,15 +44,12 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth }) => {
     setIsExpanded(value);
   };
   
-  // Expose methods to parent through ref
-  React.useImperativeHandle(
-    React.useRef(),
-    () => ({
-      isExpanded,
-      expand
-    })
-  );
-
+  // Create a ref that will be used with useImperativeHandle
+  // We don't actually use this ref in this component, but we need it for the hook
+  const nodeRef = useRef<TreeNodeRef>(null);
+  
+  // Expose methods to parent through ref - but since we're not using forwardRef,
+  // this won't actually do anything in the current implementation
   useEffect(() => {
     console.log(`${text} rendered, expanded: ${isExpanded}, childStates:`, 
       childNodes.map(c => c.expanded));
@@ -96,20 +99,29 @@ interface ChildTreeNodeProps extends TreeNodeProps {
   onExpandChange: (expanded: boolean) => void;
 }
 
-const ChildTreeNode: React.FC<ChildTreeNodeProps> = ({ 
+// We'll create a proper forwardRef version for the child node
+const ChildTreeNode = forwardRef<TreeNodeRef, ChildTreeNodeProps>(({ 
   text, 
   depth, 
   index,
   isInitiallyExpanded,
   onExpandChange
-}) => {
+}, ref) => {
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
-  const [childNodes, setChildNodes] = useState<{expanded: boolean, ref: React.RefObject<{isExpanded: boolean, expand: (value: boolean) => void}>}[]>(
+  const [childNodes, setChildNodes] = useState<{expanded: boolean, ref: React.RefObject<TreeNodeRef>}[]>(
     Array(5).fill(null).map(() => ({
       expanded: false,
-      ref: React.createRef()
+      ref: React.createRef<TreeNodeRef>()
     }))
   );
+  
+  // Expose methods to parent through ref
+  useImperativeHandle(ref, () => ({
+    isExpanded,
+    expand: (value: boolean) => {
+      setIsExpanded(value);
+    }
+  }));
   
   // Notify parent when our expanded state changes
   useEffect(() => {
@@ -165,6 +177,8 @@ const ChildTreeNode: React.FC<ChildTreeNodeProps> = ({
       )}
     </div>
   );
-};
+});
+
+ChildTreeNode.displayName = 'ChildTreeNode';
 
 export default TreeNode;
