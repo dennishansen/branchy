@@ -111,6 +111,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
                   }
                   onTextChange={(newText) => {
                     console.log(`Child node text changed: ${childPath} -> ${newText}`);
+                    // Important: Pass the FULL node path for text update
                     onTextChange(newText);
                   }}
                 />

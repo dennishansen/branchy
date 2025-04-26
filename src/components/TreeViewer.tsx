@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import TreeNode from './TreeNode';
 
@@ -19,7 +18,6 @@ const TreeViewer = () => {
     'root': { isExpanded: false, children: {} }
   });
   
-  // Add state for text content
   const [textState, setTextState] = useState<TextState>({
     'root': 'Root'
   });
@@ -69,7 +67,7 @@ const TreeViewer = () => {
     });
   };
 
-  // Update function to handle text content properly
+  // Improved update function to handle text content for specific nodes
   const updateNodeText = (nodePath: string, text: string) => {
     console.log(`Updating node text for path: "${nodePath}" to "${text}"`);
     
