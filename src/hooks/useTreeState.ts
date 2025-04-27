@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useEffect } from "react";
 
 // Node data interface
 export interface NodeData {
@@ -23,17 +23,22 @@ export type TreeAction =
     }
   | { type: "MERGE_REMOTE_CHILDREN"; payload: { newState: TreeState } }
   | { type: "SET_GENERATED"; payload: { nodePath: string; hasGenerated: boolean } }
-  | { type: "ADD_NODE"; payload: { nodePath: string; text: string } };
+  | { type: "ADD_NODE"; payload: { nodePath: string; text: string } }
+  | { type: "DELETE_CHILDREN"; payload: { nodePath: string } }
+  | { type: "RESET_STATE"; payload: { state: TreeState } };
 
 // Initial state
 const initialState: TreeState = {
   root: {
-    text: "Root",
+    text: "Maximize the flourishing of conscious life.",
     isExpanded: false,
     children: {},
     hasGeneratedChildren: false,
   },
 };
+
+// Local storage key for tree state
+const TREE_STATE_STORAGE_KEY = "branchy_tree_state";
 
 // Helper to get node text
 const getNodeText = (state: TreeState, nodePath: string): string => {
@@ -254,14 +259,79 @@ const treeReducer = (state: TreeState, action: TreeAction): TreeState => {
       return newState;
     }
 
+    case "DELETE_CHILDREN": {
+      const { nodePath } = action.payload;
+      const newState = { ...state };
+
+      // Filter out all descendants, not just direct children
+      const nodePathPrefix = `${nodePath}.`;
+      Object.keys(newState).forEach((path) => {
+        if (path.startsWith(nodePathPrefix)) {
+          delete newState[path];
+        }
+      });
+
+      // Update the parent node
+      if (newState[nodePath]) {
+        newState[nodePath] = {
+          ...newState[nodePath],
+          children: {},
+          // Keep expansion state, but reset generation status
+          hasGeneratedChildren: false,
+        };
+      }
+
+      return newState;
+    }
+
+    case "RESET_STATE": {
+      return action.payload.state;
+    }
+
     default:
       return state;
   }
 };
 
+// Load state from localStorage
+const loadStateFromStorage = (): TreeState => {
+  if (typeof window === "undefined") {
+    return initialState;
+  }
+
+  try {
+    const savedState = localStorage.getItem(TREE_STATE_STORAGE_KEY);
+    if (savedState) {
+      return JSON.parse(savedState);
+    }
+  } catch (error) {
+    console.error("Failed to load tree state from localStorage:", error);
+  }
+
+  return initialState;
+};
+
+// Save state to localStorage
+const saveStateToStorage = (state: TreeState): void => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    localStorage.setItem(TREE_STATE_STORAGE_KEY, JSON.stringify(state));
+  } catch (error) {
+    console.error("Failed to save tree state to localStorage:", error);
+  }
+};
+
 // Hook to manage tree state
 export const useTreeState = () => {
-  const [state, dispatch] = useReducer(treeReducer, initialState);
+  const [state, dispatch] = useReducer(treeReducer, loadStateFromStorage());
+
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    saveStateToStorage(state);
+  }, [state]);
 
   return {
     state,

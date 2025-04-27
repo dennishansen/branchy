@@ -70,7 +70,7 @@ export const streamTreeContent = async (
     }
 
     const stream = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",

@@ -96,6 +96,6 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[#F1F0FB] text-foreground min-h-screen;
   }
 }

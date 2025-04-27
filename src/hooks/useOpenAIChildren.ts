@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTreeContext } from "@/context/TreeContext";
 import { toast } from "@/components/ui/use-toast";
 import { streamTreeContent, parseStreamedContent, convertToTreeState } from "@/lib/openai";
 import { getChildKeys, getFullPathText } from "@/hooks/useTreeState";
+import { scrollTreeToRight } from "@/hooks/useTreeScroll";
 
 export const useOpenAIChildren = (parentPath: string, parentText: string) => {
   const { state, dispatch } = useTreeContext();
@@ -36,13 +37,19 @@ export const useOpenAIChildren = (parentPath: string, parentText: string) => {
 
       // Set loading state and reset streaming content
       setIsLoading(true);
+
+      // Scroll immediately when loading starts
+      scrollTreeToRight();
+
       let streamingContent = "";
       setStreamContent("");
 
       // If we already have children, add them to the prompt context
       let contextPrompt = additionalPrompt;
-      if (hasChildren) {
-        const existingChildren = childKeys
+      // IMPORTANT: Re-calculate childKeys based on CURRENT state inside the async function
+      const currentChildKeys = getChildKeys(state, parentPath);
+      if (currentChildKeys.length > 0) {
+        const existingChildren = currentChildKeys
           .map((key) => {
             const childPath = `${parentPath}.${key}`;
             return state[childPath]?.text || "";
@@ -55,9 +62,9 @@ export const useOpenAIChildren = (parentPath: string, parentText: string) => {
 
       // Calculate starting index for new nodes
       let startIndex = 0;
-      if (appendToExisting && childKeys.length > 0) {
+      if (appendToExisting && currentChildKeys.length > 0) {
         // Get the highest existing child key and add 1
-        startIndex = Math.max(...childKeys.map((key) => parseInt(key))) + 1;
+        startIndex = Math.max(...currentChildKeys.map((key) => parseInt(key))) + 1;
       }
 
       await streamTreeContent(
@@ -76,6 +83,7 @@ export const useOpenAIChildren = (parentPath: string, parentText: string) => {
           );
 
           if (parsedNodes.length > 0) {
+            // Pass the CURRENT state to convertToTreeState
             const newTreeState = convertToTreeState(parsedNodes, state);
 
             // Dispatch action to update tree state
@@ -83,6 +91,11 @@ export const useOpenAIChildren = (parentPath: string, parentText: string) => {
               type: "MERGE_REMOTE_CHILDREN",
               payload: { newState: newTreeState },
             });
+
+            // Scroll again when the first nodes are parsed
+            if (parsedNodes.length === 1) {
+              scrollTreeToRight();
+            }
           }
         },
         () => {
@@ -93,6 +106,11 @@ export const useOpenAIChildren = (parentPath: string, parentText: string) => {
             type: "SET_GENERATED",
             payload: { nodePath: parentPath, hasGenerated: true },
           });
+
+          // Scroll to the right after generation completes
+          setTimeout(() => {
+            scrollTreeToRight();
+          }, 100);
         }
       );
     } catch (error) {
