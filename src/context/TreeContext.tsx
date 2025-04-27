@@ -1,0 +1,27 @@
+import React, { createContext, useContext, ReactNode } from "react";
+import { useTreeState, TreeState, TreeAction } from "@/hooks/useTreeState";
+
+// Define the context shape
+type TreeContextType = {
+  state: TreeState;
+  dispatch: React.Dispatch<TreeAction>;
+};
+
+// Create the context with initial undefined value
+const TreeContext = createContext<TreeContextType | undefined>(undefined);
+
+// Provider component
+export const TreeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { state, dispatch } = useTreeState();
+
+  return <TreeContext.Provider value={{ state, dispatch }}>{children}</TreeContext.Provider>;
+};
+
+// Custom hook to use the tree context
+export const useTreeContext = () => {
+  const context = useContext(TreeContext);
+  if (context === undefined) {
+    throw new Error("useTreeContext must be used within a TreeProvider");
+  }
+  return context;
+};

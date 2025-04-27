@@ -1,8 +1,7 @@
-
-import TreeViewer from '@/components/TreeViewer';
-import { Settings } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { useState, useEffect } from 'react';
+import TreeViewer from "@/components/TreeViewer";
+import { Settings } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,14 +9,23 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { toast } from "@/components/ui/use-toast";
 
 const Index = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('openai-api-key') || '');
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem("openai-api-key") || "");
 
   const handleApiKeyChange = (value: string) => {
     setApiKey(value);
-    localStorage.setItem('openai-api-key', value);
+    localStorage.setItem("openai-api-key", value);
+
+    // Show confirmation toast when API key is saved
+    if (value) {
+      toast({
+        title: "API key saved",
+        description: "Your OpenAI API key has been saved to local storage.",
+      });
+    }
   };
 
   return (
@@ -27,8 +35,8 @@ const Index = () => {
           defaultValue="Mind Map"
           className="max-w-[200px] bg-background border-input hover:border-muted-foreground/50 transition-colors"
         />
-        <button 
-          onClick={() => setIsSettingsOpen(true)} 
+        <button
+          onClick={() => setIsSettingsOpen(true)}
           className="p-2 rounded-lg hover:bg-[#F1F0FB] transition-colors"
         >
           <Settings className="w-6 h-6 text-[#8E9196]" />
@@ -63,4 +71,3 @@ const Index = () => {
 };
 
 export default Index;
-
