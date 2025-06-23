@@ -22,16 +22,6 @@ export const useOpenAIChildren = (parentPath: string, parentText: string) => {
     appendToExisting: boolean = false
   ) => {
     try {
-      // Check if API key exists
-      if (!localStorage.getItem("openai-api-key")) {
-        toast({
-          title: "API key missing",
-          description: "Please add your OpenAI API key in the settings.",
-          variant: "destructive",
-        });
-        return;
-      }
-
       // Get the full path text for context
       const fullPathText = getFullPathText(state, parentPath);
 

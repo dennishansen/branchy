@@ -11,10 +11,12 @@ export const NODE_MARKERS = {
 
 // Function to get OpenAI API client with the API key
 export const getOpenAIClient = () => {
-  const apiKey = localStorage.getItem("openai-api-key");
+  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
-  if (!apiKey) {
-    throw new Error("OpenAI API key not found. Please add it in the settings.");
+  if (!apiKey || apiKey === "your-openai-api-key-here") {
+    throw new Error(
+      "OpenAI API key not found. Please set VITE_OPENAI_API_KEY in your .env.local file."
+    );
   }
 
   return new OpenAI({
