@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useTreeContext } from "@/context/TreeContext";
 import { useOpenAIChildren } from "@/hooks/useOpenAIChildren";
 import { getChildKeys } from "@/hooks/useTreeState";
-import { scrollTreeToRight } from "@/hooks/useTreeScroll";
 
 interface TreeNodeProps {
   text: string;
@@ -91,10 +90,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
       },
     });
 
-    // Schedule scrolling right after the node is added
-    setTimeout(() => {
-      scrollTreeToRight();
-    }, 100);
+    // No need to scroll - centering is handled automatically by CenterTrack
   };
 
   // Auto-resize textarea based on content
@@ -158,26 +154,18 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
     generateChildren,
   ]);
 
-  // Effect to scroll into view when children are generated
+  // Effect to handle when children are generated
   useEffect(() => {
-    if (isExpanded && childKeys.length > 0 && !isLoading) {
-      // Scroll to right when children are generated
-      setTimeout(() => {
-        scrollTreeToRight();
-      }, 100);
-    }
+    // No need to scroll - centering is handled automatically by CenterTrack
   }, [childKeys.length, isExpanded, isLoading]);
 
-  // Effect to scroll when loading state begins
+  // Effect to handle loading state
   useEffect(() => {
-    if (isLoading && isExpanded) {
-      // Scroll to right as soon as loading indicator appears
-      scrollTreeToRight();
-    }
+    // No need to scroll - centering is handled automatically by CenterTrack
   }, [isLoading, isExpanded]);
 
   return (
-    <div className="flex items-start gap-4" ref={nodeRef}>
+    <div data-column-node className="flex items-start gap-4" ref={nodeRef}>
       <div className="flex items-center gap-2 min-w-[244px] relative">
         <Textarea
           ref={textareaRef}
@@ -251,7 +239,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
                   );
                 })
               ) : isLoading ? (
-                <div className="flex items-start gap-4">
+                <div className="flex items-start gap-4" data-column-node>
                   <div className="relative">
                     {/* Horizontal connecting line */}
                     <div className="absolute left-[-7px] top-[50%] w-[10px] h-0.5 bg-[#9b87f5]/30"></div>

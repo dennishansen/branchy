@@ -1,4 +1,4 @@
-import TreeViewer from "@/components/TreeViewer";
+import CenteredTreeViewer from "@/components/CenteredTreeViewer";
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
@@ -26,7 +26,7 @@ const Index = () => {
         </Button>
       </div>
       <div className="flex-1 overflow-hidden">
-        <TreeViewer shouldClear={clearCounter} />
+        <CenteredTreeViewer shouldClear={clearCounter} />
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import { motion, useSpring, useTransform } from "framer-motion";
 import TreeNode from "./TreeNode";
 import { TreeProvider } from "@/context/TreeContext";
 import { useTreeContext } from "@/context/TreeContext";
@@ -20,8 +21,8 @@ const interestingPrompts = [
   "Technologies transforming consciousness",
 ];
 
-// A separate component that uses the context
-const Tree = ({ shouldClear }: { shouldClear: number }) => {
+// The actual tree content component
+const TreeContent = ({ shouldClear }: { shouldClear: number }) => {
   const { state, dispatch } = useTreeContext();
   const [randomExamples, setRandomExamples] = useState<string[]>([]);
 
@@ -46,7 +47,6 @@ const Tree = ({ shouldClear }: { shouldClear: number }) => {
 
   // Generate 5 random examples on initial render
   useEffect(() => {
-    // Shuffle array and take the first 5
     const shuffled = [...interestingPrompts].sort(() => Math.random() - 0.5);
     setRandomExamples(shuffled.slice(0, 5));
   }, []);
@@ -68,7 +68,7 @@ const Tree = ({ shouldClear }: { shouldClear: number }) => {
   const shouldShowRandomTopics = !hasChildren && !state.root.hasGeneratedChildren;
 
   return (
-    <div className="min-w-max p-4 mb-4">
+    <div className="p-4 mb-4">
       <div className="relative">
         <TreeNode text={state.root.text} nodePath="root" depth={1} />
         <div className="relative">
@@ -93,36 +93,90 @@ const Tree = ({ shouldClear }: { shouldClear: number }) => {
   );
 };
 
-interface TreeViewerProps {
+interface CenteredTreeViewerProps {
   shouldClear?: number;
 }
 
-const TreeViewer: React.FC<TreeViewerProps> = ({ shouldClear = 0 }) => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+const CenteredTreeViewer: React.FC<CenteredTreeViewerProps> = ({ shouldClear = 0 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const treeRef = useRef<HTMLDivElement>(null);
+  const [viewportWidth, setViewportWidth] = useState(0);
+  const [treeWidth, setTreeWidth] = useState(0);
 
-  // Function to scroll to the right
-  const scrollToRight = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTo({
-        left: scrollContainerRef.current.scrollWidth,
-        behavior: "smooth",
-      });
+  // Spring for smooth animation
+  const centerOffset = useSpring(0, {
+    stiffness: 100,
+    damping: 30,
+    mass: 1,
+  });
+
+  // Update viewport width on resize
+  useEffect(() => {
+    const updateViewportWidth = () => {
+      if (containerRef.current) {
+        setViewportWidth(containerRef.current.offsetWidth);
+      }
+    };
+
+    updateViewportWidth();
+    window.addEventListener("resize", updateViewportWidth);
+    return () => window.removeEventListener("resize", updateViewportWidth);
+  }, []);
+
+  // Observe tree width changes
+  useEffect(() => {
+    if (!treeRef.current) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        setTreeWidth(width);
+      }
+    });
+
+    resizeObserver.observe(treeRef.current);
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  // Calculate and animate center offset
+  useEffect(() => {
+    if (!treeRef.current) return;
+
+    // Find rightmost column center
+    const treeRect = treeRef.current.getBoundingClientRect();
+    const columnNodes = Array.from(
+      treeRef.current.querySelectorAll("[data-column-node]")
+    ) as HTMLElement[];
+
+    if (columnNodes.length === 0) {
+      centerOffset.set(0);
+      return;
     }
-  };
+
+    let rightmostCenter = 0;
+    columnNodes.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      const center = rect.left - treeRect.left + rect.width / 2; // relative to tree
+      if (center > rightmostCenter) rightmostCenter = center;
+    });
+
+    const desiredOffset = viewportWidth / 2 - rightmostCenter;
+    centerOffset.set(desiredOffset);
+  }, [viewportWidth, treeWidth, centerOffset]);
 
   return (
     <TreeProvider>
-      <div
-        className="w-full overflow-auto h-full"
-        ref={scrollContainerRef}
-        id="tree-scroll-container"
-      >
-        <div className="inline-block min-w-full px-[calc(50%-138px)]">
-          <Tree shouldClear={shouldClear} />
-        </div>
+      <div ref={containerRef} className="w-full h-full overflow-x-auto overflow-y-auto relative">
+        {/* CenterTrack layer - animates translation */}
+        <motion.div style={{ x: centerOffset }} className="inline-block">
+          {/* Tree wrapper - left-anchored, intrinsic width */}
+          <div ref={treeRef} className="inline-block">
+            <TreeContent shouldClear={shouldClear} />
+          </div>
+        </motion.div>
       </div>
     </TreeProvider>
   );
 };
 
-export default TreeViewer;
+export default CenteredTreeViewer;
