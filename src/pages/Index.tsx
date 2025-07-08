@@ -47,7 +47,7 @@ const Index = () => {
                 <p>Made by Dennis Hansen</p>
                 <div className="flex flex-col gap-2">
                   <a
-                    href="https://github.com/dennishansen/branchy-text-tree-view"
+                    href="https://github.com/dennishansen/branchy"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-800 underline"
