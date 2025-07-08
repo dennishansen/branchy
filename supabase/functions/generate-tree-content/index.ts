@@ -33,7 +33,7 @@ When someone enters a topic, they want a comprehensive set of bullets that break
 ## Formatting Rules
 1. For each bullet, wrap its content between <BULLET> and </BULLET>
 2. When a bullet has sub-bullets, place them between <CHILDREN> and </CHILDREN>
-3. Keep bullets clear and specific
+3. Keep bullets clear and specific (5-10 words)
 4. Generate ONLY direct sub-bullets for the parent bullet
 
 Example format:
@@ -51,11 +51,13 @@ Example format:
       // Extract the actual bullet text (the last part after ">")
       const lastBulletText = parentText.split(" > ").pop() || parentText;
 
-      userPrompt = `Topic: "${lastBulletText}"
+      userPrompt = `Generate 4-6 sub-bullets that break down "${lastBulletText}" into its main areas.
+
 Context: ${parentText}
 Additional guidance: ${prompt}`;
     } else {
-      userPrompt = `Topic: "${parentText}"
+      userPrompt = `Generate 4-6 sub-bullets that break down "${parentText}" into its main areas.
+
 Additional guidance: ${prompt}`;
     }
 
