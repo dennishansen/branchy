@@ -33,7 +33,7 @@ When someone enters a topic, they want a comprehensive set of bullets that break
 ## Formatting Rules
 1. For each bullet, wrap its content between <BULLET> and </BULLET>
 2. When a bullet has sub-bullets, place them between <CHILDREN> and </CHILDREN>
-3. Keep bullets clear and specific (5-10 words)
+3. Keep bullets clear and specific (max 10 words)
 4. Generate ONLY direct sub-bullets for the parent bullet
 
 Example format:
