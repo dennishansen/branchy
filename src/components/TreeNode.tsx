@@ -179,7 +179,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
           className={cn(
             "p-2 rounded-lg bg-[#22c55e] hover:bg-[#16a34a] text-white",
             "flex items-center justify-center",
-            "absolute right-3 top-0 bottom-0 my-auto h-8"
+            "absolute right-3 top-[4px]bottom-0 my-auto h-8"
           )}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -215,7 +215,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="flex flex-col gap-2"
+              className="flex flex-col gap-1"
             >
               {childKeys.length > 0 ? (
                 childKeys.map((childKey) => {
@@ -239,10 +239,10 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
                   );
                 })
               ) : isLoading ? (
-                <div className="flex items-start gap-4" data-column-node>
+                <div className="flex items-start gap-4 mt-1" data-column-node>
                   <div className="relative">
                     {/* Horizontal connecting line */}
-                    <div className="absolute left-[-7px] top-[50%] w-[10px] h-0.5 bg-[#22c55e]/30"></div>
+                    <div className="absolute left-[-7px] top-[24px] w-[10px] h-0.5 bg-[#22c55e]/30"></div>
                     <div className="flex items-center gap-2 min-w-[244px] relative">
                       <div className="resize-none overflow-hidden min-h-[56px] min-w-[244px] rounded-xl border border-input bg-background px-3 py-2 pr-14 text-sm text-gray-500 flex items-center">
                         Generating content...
@@ -257,41 +257,45 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
                 <div className="pl-6 text-sm text-gray-500">No children available</div>
               )}
 
-              {/* Button row */}
-              <div className="flex gap-2">
-                {/* Get more button - only show if we already have children */}
-                {childKeys.length > 0 && (
-                  <motion.button
-                    onClick={generateMoreChildren}
-                    className={cn(
-                      "p-2 rounded-lg bg-[#22c55e] hover:bg-[#16a34a] text-white self-start",
-                      "flex items-center justify-center"
-                    )}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </motion.button>
-                )}
-
-                {/* Add node button */}
-                <motion.button
-                  onClick={handleAddNode}
-                  className={cn(
-                    "p-2 rounded-lg bg-[#22c55e] hover:bg-[#16a34a] text-white self-start ml-0",
-                    "flex items-center justify-center"
+              {/* Button row - only render if we have buttons to show */}
+              {(childKeys.length > 0 || !isLoading) && (
+                <div className="flex gap-2 mt-1">
+                  {/* Get more button - only show if we already have children */}
+                  {childKeys.length > 0 && (
+                    <motion.button
+                      onClick={generateMoreChildren}
+                      className={cn(
+                        "p-2 rounded-lg bg-[#22c55e] hover:bg-[#16a34a] text-white self-start",
+                        "flex items-center justify-center"
+                      )}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4" />
+                      )}
+                    </motion.button>
                   )}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Plus className="w-4 h-4" />
-                </motion.button>
-              </div>
+
+                  {/* Add node button - only show when not loading or when we have actual results */}
+                  {(!isLoading || childKeys.length > 0) && (
+                    <motion.button
+                      onClick={handleAddNode}
+                      className={cn(
+                        "p-2 rounded-lg bg-[#22c55e] hover:bg-[#16a34a] text-white self-start ml-0",
+                        "flex items-center justify-center"
+                      )}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </motion.button>
+                  )}
+                </div>
+              )}
             </motion.div>
           </div>
         )}

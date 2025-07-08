@@ -54,8 +54,9 @@ const TreeContent = ({ shouldClear }: { shouldClear: number }) => {
     setRandomExamples(shuffled.slice(0, 5));
   }, []);
 
-  // Function to set a prompt as root text
+  // Function to set a prompt as root text and auto-trigger generation
   const setPromptAsRoot = (text: string) => {
+    // Set the text
     dispatch({
       type: "SET_TEXT",
       payload: {
@@ -63,12 +64,25 @@ const TreeContent = ({ shouldClear }: { shouldClear: number }) => {
         text,
       },
     });
+
+    // Auto-expand the root to trigger generation
+    // Use setTimeout to ensure the text update is processed first
+    setTimeout(() => {
+      dispatch({
+        type: "TOGGLE_EXPANDED",
+        payload: { nodePath: "root" },
+      });
+    }, 0);
   };
 
   // Check if root has any children
   const childKeys = Object.keys(state.root?.children || {});
   const hasChildren = childKeys.length > 0;
-  const shouldShowRandomTopics = !hasChildren && !state.root.hasGeneratedChildren;
+  const isRootExpanded = state.root?.isExpanded || false;
+
+  // Hide prompts if: has children, has generated children, or is expanded (which indicates generation is starting/happening)
+  const shouldShowRandomTopics =
+    !hasChildren && !state.root.hasGeneratedChildren && !isRootExpanded;
 
   return (
     <div className="px-4 pb-4 mb-4">
@@ -106,11 +120,11 @@ const CenteredTreeViewer: React.FC<CenteredTreeViewerProps> = ({ shouldClear = 0
   const [viewportWidth, setViewportWidth] = useState(0);
   const [treeWidth, setTreeWidth] = useState(0);
 
-  // Spring for smooth animation
+  // Spring for smooth animation - consistent timing for opening and closing
   const centerOffset = useSpring(0, {
-    stiffness: 100,
-    damping: 30,
-    mass: 1,
+    stiffness: 170,
+    damping: 28,
+    mass: 0.9,
   });
 
   // Update viewport width on resize

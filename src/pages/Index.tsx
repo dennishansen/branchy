@@ -31,7 +31,11 @@ const IndexContent = () => {
   return (
     <div className="w-full h-screen flex flex-col overflow-hidden">
       <div className="max-w-[276px] w-full pb-1 flex items-center mx-auto relative">
-        <div className="px-4 py-5 mt-2">
+        <div
+          className={`px-4 py-5 mt-2 transition-all duration-300 ease-in-out ${
+            hasDataToClear ? "translate-x-0" : "translate-x-[62px]"
+          }`}
+        >
           <Dialog open={aboutOpen} onOpenChange={setAboutOpen}>
             <DialogTrigger asChild>
               <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity pt-0.5">
@@ -48,7 +52,7 @@ const IndexContent = () => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-3">
+                <DialogTitle className="flex items-center gap-3 mb-3">
                   <img
                     src="/logo.svg"
                     alt="Branchy Logo"
@@ -60,10 +64,9 @@ const IndexContent = () => {
                 </DialogTitle>
                 <DialogDescription className="space-y-4">
                   <p>
-                    Branchy is an experimental interactive information diver. Enter a topic, click
-                    the button, and watch it expand. And expand again. Then come up for air and dive
-                    back into a new branch. It's for those who like me that like diving in and out,
-                    quickly.
+                    Branchy is an information diver. Enter a topic, click the button, and watch it
+                    expand. And expand again. Then come up for air and dive back into a new branch.
+                    It's for those who like me that like diving in and out, quickly.
                   </p>
                   <p>
                     <em>Made by Dennis Hansen</em>
@@ -91,19 +94,23 @@ const IndexContent = () => {
             </DialogContent>
           </Dialog>
         </div>
-        {hasDataToClear && (
-          <div className="absolute right-4 top-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleClearTree}
-              title="Clear tree"
-              className="text-gray-500 hover:text-red-500 hover:bg-transparent px-0 mt-3"
-            >
-              Clear
-            </Button>
-          </div>
-        )}
+        <div
+          className={`absolute right-4 top-4 transition-all duration-300 ease-in-out ${
+            hasDataToClear
+              ? "opacity-100 transform translate-x-0 scale-100"
+              : "opacity-0 transform translate-x-2 scale-95 pointer-events-none"
+          }`}
+        >
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClearTree}
+            title="Clear tree"
+            className="text-gray-500 hover:text-red-500 hover:bg-transparent px-0 mt-3"
+          >
+            Clear
+          </Button>
+        </div>
       </div>
       <div className="flex-1 overflow-hidden">
         <CenteredTreeViewer shouldClear={clearCounter} />
