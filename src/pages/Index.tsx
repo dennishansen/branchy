@@ -46,7 +46,7 @@ const IndexContent = () => {
                   height="20"
                   className="flex-shrink-0"
                 />
-                <span className="text-lg font-bold text-gray-900">Branchy</span>
+                <span className="text-lg font-semibold text-gray-900">Branchy</span>
                 <Info className="h-4 w-4 text-gray-400 ml mt-0.5" />
               </div>
             </DialogTrigger>
