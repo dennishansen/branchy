@@ -1,5 +1,5 @@
-import OpenAI from "openai";
 import { TreeState, NodeData } from "@/hooks/useTreeState";
+import { supabase } from "@/integrations/supabase/client";
 
 // Define the format for node parsing
 export const NODE_MARKERS = {
@@ -9,109 +9,45 @@ export const NODE_MARKERS = {
   END_CHILDREN: "</CHILDREN>",
 };
 
-// Function to get OpenAI API client with the API key
-export const getOpenAIClient = () => {
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-
-  if (!apiKey || apiKey === "your-openai-api-key-here") {
-    throw new Error(
-      "OpenAI API key not found. Please set VITE_OPENAI_API_KEY in your .env.local file."
-    );
-  }
-
-  return new OpenAI({
-    apiKey,
-    dangerouslyAllowBrowser: true, // Allow client-side usage
-  });
-};
-
-// Function to generate tree nodes with streaming
+// Function to generate tree nodes using Supabase edge function
 export const streamTreeContent = async (
   prompt: string,
   parentText: string,
   onToken: (token: string) => void,
   onComplete?: () => void
 ) => {
-  const openai = getOpenAIClient();
-
   try {
-    const systemPrompt = `You are a tool that generates logical breakdowns of topics. Your goal is to predict what a user would naturally expect when they want to explore a topic.
-
-    ## Core Principle
-    When someone enters a topic, they want to see the most logical way to break it down - the main categories, types, or areas that naturally exist within that topic.
-
-    ## Guidelines
-    - Think: "What would someone naturally expect to see when exploring this topic?"
-    - Provide the most obvious, logical subdivision
-    - Use clear, specific names that immediately make sense
-    - Generate 4-6 children that cover the main areas
-    - Keep it simple and predictable
-
-    ## Formatting Rules
-    1. For each node, wrap its content between ${NODE_MARKERS.BEGIN_NODE} and ${NODE_MARKERS.END_NODE}
-    2. When a node has children, place them between ${NODE_MARKERS.BEGIN_CHILDREN} and ${NODE_MARKERS.END_CHILDREN}
-    3. Keep node names clear and specific (2-5 words)
-    4. Generate ONLY direct children for the parent node
-    
-    Example format:
-    ${NODE_MARKERS.BEGIN_CHILDREN}
-      ${NODE_MARKERS.BEGIN_NODE}Logical Category 1${NODE_MARKERS.END_NODE}
-      ${NODE_MARKERS.BEGIN_NODE}Logical Category 2${NODE_MARKERS.END_NODE}
-      ${NODE_MARKERS.BEGIN_NODE}Logical Category 3${NODE_MARKERS.END_NODE}
-    ${NODE_MARKERS.END_CHILDREN}`;
-
-    // Check if the parent text contains path context (indicated by " > ")
-    const hasPathContext = parentText.includes(" > ");
-    let userPrompt;
-
-    if (hasPathContext) {
-      // Extract the actual node text (the last part after ">")
-      const lastNodeText = parentText.split(" > ").pop() || parentText;
-
-      userPrompt = `What are the main types or categories within "${lastNodeText}"?
-      
-      Context: ${parentText}
-      Additional guidance: ${prompt}
-      
-      Generate the logical breakdown that someone would naturally expect when exploring "${lastNodeText}".`;
-    } else {
-      userPrompt = `What are the main types or categories within "${parentText}"?
-      
-      Additional guidance: ${prompt}
-      
-      Generate the logical breakdown that someone would naturally expect when exploring "${parentText}".`;
-    }
-
-    const stream = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
-        {
-          role: "user",
-          content: userPrompt,
-        },
-      ],
-      stream: true,
+    const { data, error } = await supabase.functions.invoke('generate-tree-content', {
+      body: { prompt, parentText }
     });
 
-    let totalContent = "";
-
-    for await (const chunk of stream) {
-      const content = chunk.choices[0]?.delta?.content || "";
-      totalContent += content;
-      if (content) {
-        onToken(content);
-      }
+    if (error) {
+      throw error;
     }
 
-    if (onComplete) {
-      onComplete();
+    if (data?.content) {
+      // Simulate streaming by gradually emitting the content
+      const content = data.content;
+      let currentIndex = 0;
+      
+      const emitChunk = () => {
+        if (currentIndex < content.length) {
+          const chunkSize = Math.min(10, content.length - currentIndex);
+          const chunk = content.slice(currentIndex, currentIndex + chunkSize);
+          onToken(chunk);
+          currentIndex += chunkSize;
+          setTimeout(emitChunk, 50); // Small delay to simulate streaming
+        } else {
+          if (onComplete) {
+            onComplete();
+          }
+        }
+      };
+
+      emitChunk();
     }
   } catch (error) {
-    console.error("Error streaming from OpenAI:", error);
+    console.error("Error generating tree content:", error);
     throw error;
   }
 };
