@@ -14,11 +14,12 @@ export const streamTreeContent = async (
   prompt: string,
   parentText: string,
   onToken: (token: string) => void,
-  onComplete?: () => void
+  onComplete?: (intent?: string) => void,
+  rootIntent?: string | null
 ) => {
   try {
     const { data, error } = await supabase.functions.invoke("generate-tree-content", {
-      body: { prompt, parentText },
+      body: { prompt, parentText, rootIntent },
     });
 
     if (error) {
@@ -39,7 +40,8 @@ export const streamTreeContent = async (
           setTimeout(emitChunk, 50); // Small delay to simulate streaming
         } else {
           if (onComplete) {
-            onComplete();
+            // Pass the intent to the completion callback
+            onComplete(data.intent);
           }
         }
       };

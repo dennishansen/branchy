@@ -15,7 +15,7 @@ serve(async (req) => {
   }
 
   try {
-    const { prompt, parentText } = await req.json();
+    const { prompt, parentText, rootIntent } = await req.json();
 
     console.log("Generating tree content for:", { prompt, parentText });
 
@@ -28,15 +28,21 @@ Convert a parent bullet into a concise set of intuitive sub-bullets covering its
 - Identify natural subtopics from the parent bullet.
 - Ensure bullets are concise (5-7 words), clear, and focused.
 - Generate only immediate sub-bullets for the parent.
+- If an original intent is provided, ensure all sub-bullets align with that intent while being relevant to the immediate parent.
 
 ## Formatting Rules
-1. First, wrap your interpretation of what the user wants to enumerate with <INTENT> and </INTENT>
-2. Then wrap each bullet with <BULLET> and </BULLET>
+1. ${
+      rootIntent
+        ? "Maintain consistency with the original intent."
+        : "First, wrap your interpretation of what the user wants to enumerate with <INTENT> and </INTENT>"
+    }
+2. ${rootIntent ? "Then wrap" : "Then wrap"} each bullet with <BULLET> and </BULLET>
 3. If sub-bullets exist, enclose them within <CHILDREN> and </CHILDREN>
 
 Example format:
-<INTENT>The user wants to enumerate types of [specific thing]</INTENT>
-<CHILDREN>
+${
+  rootIntent ? "" : "<INTENT>The user wants to enumerate types of [specific thing]</INTENT>\n"
+}<CHILDREN>
   <BULLET>Bullet 1</BULLET>
   <BULLET>Bullet 2</BULLET>
   <BULLET>Bullet 3</BULLET>
@@ -52,10 +58,12 @@ Example format:
 
       userPrompt = `Generate 4-6 sub-bullets for "${lastBulletText}".
 
-Context: ${parentText}
+Context: ${parentText}${rootIntent ? `\nOriginal Intent: ${rootIntent}` : ""}
 Additional guidance: ${prompt}`;
     } else {
-      userPrompt = `Generate 4-6 sub-bullets for "${parentText}"
+      userPrompt = `Generate 4-6 sub-bullets for "${parentText}"${
+        rootIntent ? `\nOriginal Intent: ${rootIntent}` : ""
+      }
 Additional guidance: ${prompt}`;
     }
 
@@ -90,9 +98,26 @@ Additional guidance: ${prompt}`;
 
     console.log("Generated content:", generatedContent);
 
-    return new Response(JSON.stringify({ content: generatedContent }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    // Extract intent if present
+    let intent = null;
+    let contentWithoutIntent = generatedContent;
+
+    const intentMatch = generatedContent.match(/<INTENT>(.*?)<\/INTENT>/s);
+    if (intentMatch) {
+      intent = intentMatch[1].trim();
+      // Remove the intent from the content
+      contentWithoutIntent = generatedContent.replace(/<INTENT>.*?<\/INTENT>\s*/s, "");
+    }
+
+    return new Response(
+      JSON.stringify({
+        content: contentWithoutIntent,
+        intent: intent,
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     console.error("Error in generate-tree-content function:", error);
     return new Response(JSON.stringify({ error: error.message }), {

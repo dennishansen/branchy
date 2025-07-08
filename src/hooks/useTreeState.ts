@@ -25,7 +25,8 @@ export type TreeAction =
   | { type: "SET_GENERATED"; payload: { nodePath: string; hasGenerated: boolean } }
   | { type: "ADD_NODE"; payload: { nodePath: string; text: string } }
   | { type: "DELETE_CHILDREN"; payload: { nodePath: string } }
-  | { type: "RESET_STATE"; payload: { state: TreeState } };
+  | { type: "RESET_STATE"; payload: { state: TreeState } }
+  | { type: "SET_ROOT_INTENT"; payload: { intent: string } };
 
 // Initial state
 const initialState: TreeState = {

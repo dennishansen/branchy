@@ -6,12 +6,15 @@ import { getChildKeys, getFullPathText } from "@/hooks/useTreeState";
 import { scrollTreeToRight } from "@/hooks/useTreeScroll";
 
 export const useOpenAIChildren = (parentPath: string, parentText: string) => {
-  const { state, dispatch } = useTreeContext();
+  const { state, dispatch, rootIntent, setRootIntent } = useTreeContext();
   const [isLoading, setIsLoading] = useState(false);
   const [streamContent, setStreamContent] = useState("");
 
   // Get hasGenerated from state instead of using a ref
   const hasGenerated = state[parentPath]?.hasGeneratedChildren || false;
+
+  // Check if this is the root node
+  const isRootNode = parentPath === "root";
 
   // Check if this node already has children
   const childKeys = getChildKeys(state, parentPath);
@@ -99,8 +102,13 @@ Generate a fresh set of outline bullets.`;
             }
           }
         },
-        () => {
+        (intent) => {
           setIsLoading(false);
+
+          // If this is the root node and we got an intent back, store it
+          if (isRootNode && intent && !rootIntent) {
+            setRootIntent(intent);
+          }
 
           // Mark this node as having generated children
           dispatch({
@@ -112,7 +120,9 @@ Generate a fresh set of outline bullets.`;
           setTimeout(() => {
             scrollTreeToRight();
           }, 100);
-        }
+        },
+        // Pass the current root intent for consistency (null for root node, stored intent for sub-nodes)
+        isRootNode ? null : rootIntent
       );
     } catch (error) {
       console.error("Error generating node children:", error);

@@ -22,12 +22,13 @@ const interestingPrompts = [
 
 // The actual tree content component
 const TreeContent = ({ shouldClear }: { shouldClear: number }) => {
-  const { state, dispatch } = useTreeContext();
+  const { state, dispatch, setRootIntent } = useTreeContext();
   const [randomExamples, setRandomExamples] = useState<string[]>([]);
 
   // Effect to reset the tree when shouldClear changes
   useEffect(() => {
     if (shouldClear > 0) {
+      // Reset the tree state
       dispatch({
         type: "RESET_STATE",
         payload: {
@@ -41,8 +42,11 @@ const TreeContent = ({ shouldClear }: { shouldClear: number }) => {
           },
         },
       });
+
+      // Also reset the root intent
+      setRootIntent(null);
     }
-  }, [shouldClear, dispatch]);
+  }, [shouldClear, dispatch, setRootIntent]);
 
   // Generate 5 random examples on initial render
   useEffect(() => {
