@@ -47,7 +47,18 @@ export const useOpenAIChildren = (parentPath: string, parentText: string) => {
           .filter(Boolean)
           .join(", ");
 
-        contextPrompt = `${additionalPrompt} Please generate more children different from the existing ones: [${existingChildren}]`;
+        if (appendToExisting) {
+          contextPrompt = `${additionalPrompt}
+
+Existing categories: [${existingChildren}]
+
+Generate additional different categories that aren't already covered.`;
+        } else {
+          contextPrompt = `${additionalPrompt}
+
+Previous categories were: [${existingChildren}]
+Generate a fresh logical breakdown.`;
+        }
       }
 
       // Calculate starting index for new nodes
@@ -117,7 +128,10 @@ export const useOpenAIChildren = (parentPath: string, parentText: string) => {
   };
 
   const generateMoreChildren = async () => {
-    generateChildren("Please generate additional children for this topic.", true);
+    generateChildren(
+      "Generate additional categories or types that are different from the existing ones.",
+      true
+    );
   };
 
   return {

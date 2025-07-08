@@ -35,19 +35,29 @@ export const streamTreeContent = async (
   const openai = getOpenAIClient();
 
   try {
-    const systemPrompt = `You are a tool that generates hierarchical content for mind maps or outlines. 
-    When generating content, follow these formatting rules:
-    
+    const systemPrompt = `You are a tool that generates logical breakdowns of topics. Your goal is to predict what a user would naturally expect when they want to explore a topic.
+
+    ## Core Principle
+    When someone enters a topic, they want to see the most logical way to break it down - the main categories, types, or areas that naturally exist within that topic.
+
+    ## Guidelines
+    - Think: "What would someone naturally expect to see when exploring this topic?"
+    - Provide the most obvious, logical subdivision
+    - Use clear, specific names that immediately make sense
+    - Generate 4-6 children that cover the main areas
+    - Keep it simple and predictable
+
+    ## Formatting Rules
     1. For each node, wrap its content between ${NODE_MARKERS.BEGIN_NODE} and ${NODE_MARKERS.END_NODE}
     2. When a node has children, place them between ${NODE_MARKERS.BEGIN_CHILDREN} and ${NODE_MARKERS.END_CHILDREN}
-    3. Keep node names concise but descriptive
-    4. Generate ONLY direct children for the parent node. Do not generate grandchildren.
+    3. Keep node names clear and specific (2-5 words)
+    4. Generate ONLY direct children for the parent node
     
-    Example format of your response for children of "${parentText}":
+    Example format:
     ${NODE_MARKERS.BEGIN_CHILDREN}
-      ${NODE_MARKERS.BEGIN_NODE}Child Topic 1${NODE_MARKERS.END_NODE}
-      ${NODE_MARKERS.BEGIN_NODE}Child Topic 2${NODE_MARKERS.END_NODE}
-      ${NODE_MARKERS.BEGIN_NODE}Child Topic 3${NODE_MARKERS.END_NODE}
+      ${NODE_MARKERS.BEGIN_NODE}Logical Category 1${NODE_MARKERS.END_NODE}
+      ${NODE_MARKERS.BEGIN_NODE}Logical Category 2${NODE_MARKERS.END_NODE}
+      ${NODE_MARKERS.BEGIN_NODE}Logical Category 3${NODE_MARKERS.END_NODE}
     ${NODE_MARKERS.END_CHILDREN}`;
 
     // Check if the parent text contains path context (indicated by " > ")
@@ -58,17 +68,18 @@ export const streamTreeContent = async (
       // Extract the actual node text (the last part after ">")
       const lastNodeText = parentText.split(" > ").pop() || parentText;
 
-      userPrompt = `Generate direct child nodes for the topic: "${lastNodeText}".
+      userPrompt = `What are the main types or categories within "${lastNodeText}"?
       
-      The full path context is: "${parentText}"
+      Context: ${parentText}
+      Additional guidance: ${prompt}
       
-      Use this path context to understand the hierarchy and generate appropriate children.
-      
-      Additional context or requirements: ${prompt}`;
+      Generate the logical breakdown that someone would naturally expect when exploring "${lastNodeText}".`;
     } else {
-      userPrompt = `Generate direct child nodes for the topic: "${parentText}".
+      userPrompt = `What are the main types or categories within "${parentText}"?
       
-      Additional context or requirements: ${prompt}`;
+      Additional guidance: ${prompt}
+      
+      Generate the logical breakdown that someone would naturally expect when exploring "${parentText}".`;
     }
 
     const stream = await openai.chat.completions.create({
