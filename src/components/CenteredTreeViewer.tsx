@@ -7,7 +7,7 @@ import { useTreeContext } from "@/context/TreeContext";
 const interestingPrompts = [
   "Maximize human flourishing",
   "Industries of the world",
-  "Breakdown all of human work in terms of jobs-to-be-done",
+  "Give me the jobs-to-be-done of the economy",
   "How to make civilization sustainable",
   "The future of education",
   "AI's long-term societal impact",
