@@ -31,16 +31,16 @@ When someone enters a topic, they want a comprehensive set of bullets that break
 - Keep it simple and predictable
 
 ## Formatting Rules
-1. For each node/bullet, wrap its content between <NODE> and </NODE>
-2. When a node has children, place them between <CHILDREN> and </CHILDREN>
-3. Keep node names clear and specific (2-5 words)
-4. Generate ONLY direct children for the parent node
+1. For each bullet, wrap its content between <BULLET> and </BULLET>
+2. When a bullet has sub-bullets, place them between <CHILDREN> and </CHILDREN>
+3. Keep bullets clear and specific
+4. Generate ONLY direct sub-bullets for the parent bullet
 
 Example format:
 <CHILDREN>
-  <NODE>Bullet 1</NODE>
-  <NODE>Bullet 2</NODE>
-  <NODE>Bullet 3</NODE>
+  <BULLET>Bullet 1</BULLET>
+  <BULLET>Bullet 2</BULLET>
+  <BULLET>Bullet 3</BULLET>
 </CHILDREN>`;
 
     // Check if the parent text contains path context (indicated by " > ")
@@ -48,21 +48,15 @@ Example format:
     let userPrompt;
 
     if (hasPathContext) {
-      // Extract the actual node text (the last part after ">")
-      const lastNodeText = parentText.split(" > ").pop() || parentText;
+      // Extract the actual bullet text (the last part after ">")
+      const lastBulletText = parentText.split(" > ").pop() || parentText;
 
-      userPrompt = `What are the main types or categories within "${lastNodeText}"?
-      
+      userPrompt = `Topic: "${lastBulletText}"
 Context: ${parentText}
-Additional guidance: ${prompt}
-
-Generate the logical breakdown that someone would naturally expect when exploring "${lastNodeText}".`;
+Additional guidance: ${prompt}`;
     } else {
-      userPrompt = `What are the main types or categories within "${parentText}"?
-      
-Additional guidance: ${prompt}
-
-Generate the logical breakdown that someone would naturally expect when exploring "${parentText}".`;
+      userPrompt = `Topic: "${parentText}"
+Additional guidance: ${prompt}`;
     }
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
