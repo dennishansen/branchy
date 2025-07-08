@@ -59,11 +59,14 @@ const IndexContent = () => {
               </DialogTitle>
               <DialogDescription className="space-y-4">
                 <p>
-                  Branchy is an interactive information diver. Enter a topic, click the button, and
-                  have it expanded. And expanded. And then come up for air and go back into a new
-                  branch. Its for those that like diving and out, quickly. Tweet me your feedback!
+                  Branchy is an experimental interactive information diver. Enter a topic, click the
+                  button, and watch it expand. And expand again. Then come up for air and dive back
+                  into a new branch. It's for those who like me that like diving in and out,
+                  quickly.
                 </p>
-                <p>Made by Dennis Hansen</p>
+                <p>
+                  <em>Made by Dennis Hansen</em>
+                </p>
                 <div className="flex flex-col gap-2">
                   <a
                     href="https://x.com/dennizor?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"
