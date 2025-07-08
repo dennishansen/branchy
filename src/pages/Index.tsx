@@ -55,7 +55,7 @@ const IndexContent = () => {
                   height="32"
                   className="flex-shrink-0"
                 />
-                What's Branchy?
+                Branchy who?
               </DialogTitle>
               <DialogDescription className="space-y-4">
                 <p>
