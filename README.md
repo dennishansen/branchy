@@ -1,6 +1,8 @@
-# Branchy
+# <img src="public/logo.svg" alt="Branchy Logo" width="32" height="32" style="vertical-align: middle;"> Branchy
 
 An AI-powered tool that helps you explore any topic by creating an interactive, branching tree of ideas. Enter a topic, click to expand, and discover new subtopics as you dive deeper.
+
+🌐 **[Try it live at branchy.co](https://branchy.co)**
 
 ## ✨ What it does
 
@@ -45,8 +47,11 @@ An AI-powered tool that helps you explore any topic by creating an interactive, 
    Create `.env.local`:
 
    ```
-   VITE_SUPABASE_URL=your-supabase-url
-   VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+   OPENAI_API_KEY=your-openai-api-key
+   SUPABASE_URL=your-supabase-url
+   SUPABASE_ANON_KEY=your-supabase-anon-key
+   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+   SUPABASE_DB_URL=your-database-url
    ```
 
 4. **Start developing**
