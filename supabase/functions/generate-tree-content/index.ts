@@ -31,7 +31,7 @@ When someone enters a topic, they want a comprehensive set of bullets that break
 - Keep it simple and predictable
 
 ## Formatting Rules
-1. For each node, wrap its content between <NODE> and </NODE>
+1. For each node/bullet, wrap its content between <NODE> and </NODE>
 2. When a node has children, place them between <CHILDREN> and </CHILDREN>
 3. Keep node names clear and specific (2-5 words)
 4. Generate ONLY direct children for the parent node
