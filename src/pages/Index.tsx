@@ -10,15 +10,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { TreeProvider, useTreeContext } from "@/context/TreeContext";
 
-const Index = () => {
+const IndexContent = () => {
   const [clearCounter, setClearCounter] = useState(0);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const { state } = useTreeContext();
 
   const handleClearTree = useCallback(() => {
     // Increment counter to trigger tree reset
     setClearCounter((prev) => prev + 1);
   }, []);
+
+  // Check if there's data to clear - either root text or children
+  const hasDataToClear =
+    (state.root?.text && state.root.text.trim() !== "") ||
+    Object.keys(state.root?.children || {}).length > 0 ||
+    Object.keys(state).filter((key) => key !== "root").length > 0;
 
   return (
     <div className="w-full h-screen flex flex-col overflow-hidden">
@@ -47,25 +55,16 @@ const Index = () => {
                   height="32"
                   className="flex-shrink-0"
                 />
-                About Branchy
+                What's Branchy?
               </DialogTitle>
               <DialogDescription className="space-y-4">
                 <p>
-                  Branchy is an interactive tree visualization tool that lets you explore topics by
-                  generating branching content. Start with any topic, click the arrow to expand, and
-                  watch as AI generates related subtopics that branch out into an explorable
-                  knowledge tree.
+                  Branchy is an interactive information diver. Enter a topic, click the button, and
+                  have it expanded. And expanded. And then come up for air and go back into a new
+                  branch. Its for those that like diving and out, quickly. Tweet me your feedback!
                 </p>
                 <p>Made by Dennis Hansen</p>
                 <div className="flex flex-col gap-2">
-                  <a
-                    href="https://github.com/dennishansen/branchy"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 underline"
-                  >
-                    GitHub Repository
-                  </a>
                   <a
                     href="https://x.com/dennizor?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"
                     target="_blank"
@@ -74,25 +73,43 @@ const Index = () => {
                   >
                     Twitter/X Profile
                   </a>
+                  <a
+                    href="https://github.com/dennishansen/branchy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline"
+                  >
+                    GitHub Repository
+                  </a>
                 </div>
               </DialogDescription>
             </DialogHeader>
           </DialogContent>
         </Dialog>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleClearTree}
-          title="Clear tree"
-          className="rounded-xl bg-white/90 text-gray-500 hover:text-red-500"
-        >
-          Clear
-        </Button>
+        {hasDataToClear && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClearTree}
+            title="Clear tree"
+            className="text-gray-500 hover:text-red-500 hover:bg-transparent"
+          >
+            Clear
+          </Button>
+        )}
       </div>
       <div className="flex-1 overflow-hidden">
         <CenteredTreeViewer shouldClear={clearCounter} />
       </div>
     </div>
+  );
+};
+
+const Index = () => {
+  return (
+    <TreeProvider>
+      <IndexContent />
+    </TreeProvider>
   );
 };
 

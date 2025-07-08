@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { motion, useSpring, useTransform } from "framer-motion";
 import TreeNode from "./TreeNode";
-import { TreeProvider } from "@/context/TreeContext";
 import { useTreeContext } from "@/context/TreeContext";
 
 // List of interesting prompts
@@ -165,17 +164,15 @@ const CenteredTreeViewer: React.FC<CenteredTreeViewerProps> = ({ shouldClear = 0
   }, [viewportWidth, treeWidth, centerOffset]);
 
   return (
-    <TreeProvider>
-      <div ref={containerRef} className="w-full h-full overflow-x-auto overflow-y-auto relative">
-        {/* CenterTrack layer - animates translation */}
-        <motion.div style={{ x: centerOffset }} className="inline-block">
-          {/* Tree wrapper - left-anchored, intrinsic width */}
-          <div ref={treeRef} className="inline-block">
-            <TreeContent shouldClear={shouldClear} />
-          </div>
-        </motion.div>
-      </div>
-    </TreeProvider>
+    <div ref={containerRef} className="w-full h-full overflow-x-auto overflow-y-auto relative">
+      {/* CenterTrack layer - animates translation */}
+      <motion.div style={{ x: centerOffset }} className="inline-block">
+        {/* Tree wrapper - left-anchored, intrinsic width */}
+        <div ref={treeRef} className="inline-block">
+          <TreeContent shouldClear={shouldClear} />
+        </div>
+      </motion.div>
+    </div>
   );
 };
 
