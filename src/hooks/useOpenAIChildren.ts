@@ -50,14 +50,14 @@ export const useOpenAIChildren = (parentPath: string, parentText: string) => {
         if (appendToExisting) {
           contextPrompt = `${additionalPrompt}
 
-Existing categories: [${existingChildren}]
+Existing outline bullets: [${existingChildren}]
 
-Generate additional different categories that aren't already covered.`;
+Generate additional outline bullets that are different from the existing ones.`;
         } else {
           contextPrompt = `${additionalPrompt}
 
-Previous categories were: [${existingChildren}]
-Generate a fresh logical breakdown.`;
+Previous outline bullets were: [${existingChildren}]
+Generate a fresh set of outline bullets.`;
         }
       }
 
@@ -129,7 +129,7 @@ Generate a fresh logical breakdown.`;
 
   const generateMoreChildren = async () => {
     generateChildren(
-      "Generate additional categories or types that are different from the existing ones.",
+      "Generate additional outline bullets that are different from the existing ones.",
       true
     );
   };

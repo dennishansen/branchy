@@ -6,7 +6,7 @@ An AI-powered interactive tree visualization tool that helps you explore topics 
 
 ## ✨ Features
 
-- **AI-Powered Exploration**: Uses OpenAI's GPT-4 to intelligently generate subtopics and categories
+- **AI-Powered Exploration**: Uses OpenAI's GPT-4 to intelligently generate subtopic outline bullets
 - **Interactive Tree Navigation**: Click arrows to expand nodes and explore deeper into topics
 - **Streaming Content Generation**: Real-time content streaming as AI generates responses
 - **Smart Centering**: Automatically centers the tree view as it expands horizontally

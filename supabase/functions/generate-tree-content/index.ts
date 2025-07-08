@@ -48,13 +48,12 @@ Example format:
       // Extract the actual bullet text (the last part after ">")
       const lastBulletText = parentText.split(" > ").pop() || parentText;
 
-      userPrompt = `Generate 4-6 sub-bullets that break down "${lastBulletText}" into its main areas.
+      userPrompt = `Generate 4-6 sub-bullets for "${lastBulletText}".
 
 Context: ${parentText}
 Additional guidance: ${prompt}`;
     } else {
-      userPrompt = `Generate 4-6 sub-bullets that break down "${parentText}" into its main areas.
-
+      userPrompt = `Generate 4-6 sub-bullets for "${parentText}"
 Additional guidance: ${prompt}`;
     }
 
