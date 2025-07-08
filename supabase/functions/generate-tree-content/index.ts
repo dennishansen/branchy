@@ -28,6 +28,7 @@ Convert a parent bullet into a concise set of intuitive sub-bullets covering its
 - Identify natural subtopics from the parent bullet.
 - Ensure bullets are concise (5-7 words), clear, and focused.
 - Generate only immediate sub-bullets for the parent.
+- Before answering, infer the user’s underlying goal.
 
 ## Formatting Rules
 1. Wrap each bullet with <BULLET> and </BULLET>
