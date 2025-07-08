@@ -1,10 +1,10 @@
 import { TreeState, NodeData } from "@/hooks/useTreeState";
 import { supabase } from "@/integrations/supabase/client";
 
-// Define the format for node parsing
-export const NODE_MARKERS = {
-  BEGIN_NODE: "<NODE>",
-  END_NODE: "</NODE>",
+// Define the format for bullet parsing
+export const BULLET_MARKERS = {
+  BEGIN_BULLET: "<BULLET>",
+  END_BULLET: "</BULLET>",
   BEGIN_CHILDREN: "<CHILDREN>",
   END_CHILDREN: "</CHILDREN>",
 };
@@ -17,8 +17,8 @@ export const streamTreeContent = async (
   onComplete?: () => void
 ) => {
   try {
-    const { data, error } = await supabase.functions.invoke('generate-tree-content', {
-      body: { prompt, parentText }
+    const { data, error } = await supabase.functions.invoke("generate-tree-content", {
+      body: { prompt, parentText },
     });
 
     if (error) {
@@ -29,7 +29,7 @@ export const streamTreeContent = async (
       // Simulate streaming by gradually emitting the content
       const content = data.content;
       let currentIndex = 0;
-      
+
       const emitChunk = () => {
         if (currentIndex < content.length) {
           const chunkSize = Math.min(10, content.length - currentIndex);
@@ -68,49 +68,51 @@ export const parseStreamedContent = (
 ): ParsedNode[] => {
   const result: ParsedNode[] = [];
 
-  // Incremental parsing logic - look for complete node patterns regardless of the full structure
-  if (content.includes(NODE_MARKERS.BEGIN_CHILDREN)) {
+  // Incremental parsing logic - look for complete bullet patterns regardless of the full structure
+  if (content.includes(BULLET_MARKERS.BEGIN_CHILDREN)) {
     // Extract content between CHILDREN tags, or just get everything after BEGIN_CHILDREN if END_CHILDREN not found yet
-    const childrenStartIndex = content.indexOf(NODE_MARKERS.BEGIN_CHILDREN);
+    const childrenStartIndex = content.indexOf(BULLET_MARKERS.BEGIN_CHILDREN);
     let childrenContent;
-    const childrenEndIndex = content.lastIndexOf(NODE_MARKERS.END_CHILDREN);
+    const childrenEndIndex = content.lastIndexOf(BULLET_MARKERS.END_CHILDREN);
 
     if (childrenEndIndex !== -1) {
       childrenContent = content.substring(
-        childrenStartIndex + NODE_MARKERS.BEGIN_CHILDREN.length,
+        childrenStartIndex + BULLET_MARKERS.BEGIN_CHILDREN.length,
         childrenEndIndex
       );
     } else {
-      childrenContent = content.substring(childrenStartIndex + NODE_MARKERS.BEGIN_CHILDREN.length);
+      childrenContent = content.substring(
+        childrenStartIndex + BULLET_MARKERS.BEGIN_CHILDREN.length
+      );
     }
 
-    // Look for completed nodes <NODE>text</NODE>
+    // Look for completed bullets <BULLET>text</BULLET>
     let nodeIndex = startIndex;
     let searchPosition = 0;
 
     while (searchPosition < childrenContent.length) {
-      const nodeStartPos = childrenContent.indexOf(NODE_MARKERS.BEGIN_NODE, searchPosition);
-      if (nodeStartPos === -1) break;
+      const bulletStartPos = childrenContent.indexOf(BULLET_MARKERS.BEGIN_BULLET, searchPosition);
+      if (bulletStartPos === -1) break;
 
-      const nodeEndPos = childrenContent.indexOf(NODE_MARKERS.END_NODE, nodeStartPos);
-      if (nodeEndPos === -1) break; // No complete node found
+      const bulletEndPos = childrenContent.indexOf(BULLET_MARKERS.END_BULLET, bulletStartPos);
+      if (bulletEndPos === -1) break; // No complete bullet found
 
-      // Extract node text
-      const nodeText = childrenContent
-        .substring(nodeStartPos + NODE_MARKERS.BEGIN_NODE.length, nodeEndPos)
+      // Extract bullet text
+      const bulletText = childrenContent
+        .substring(bulletStartPos + BULLET_MARKERS.BEGIN_BULLET.length, bulletEndPos)
         .trim();
 
       // Create the node
       const nodePath = `${rootPath}.${nodeIndex}`;
       result.push({
-        text: nodeText,
+        text: bulletText,
         children: [],
         parentPath: rootPath,
         path: nodePath,
       });
 
-      // Move search position past this node
-      searchPosition = nodeEndPos + NODE_MARKERS.END_NODE.length;
+      // Move search position past this bullet
+      searchPosition = bulletEndPos + BULLET_MARKERS.END_BULLET.length;
       nodeIndex++;
     }
   }
