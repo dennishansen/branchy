@@ -31,7 +31,7 @@ const IndexContent = () => {
   return (
     <div className="w-full h-screen flex flex-col overflow-hidden">
       <div className="max-w-[276px] w-full pb-1 flex items-center mx-auto relative">
-        <div className="px-4 py-5">
+        <div className="px-4 py-5 mt-2">
           <Dialog open={aboutOpen} onOpenChange={setAboutOpen}>
             <DialogTrigger asChild>
               <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity pt-0.5">
@@ -98,7 +98,7 @@ const IndexContent = () => {
               size="sm"
               onClick={handleClearTree}
               title="Clear tree"
-              className="text-gray-500 hover:text-red-500 hover:bg-transparent px-0 mt-1"
+              className="text-gray-500 hover:text-red-500 hover:bg-transparent px-0 mt-3"
             >
               Clear
             </Button>

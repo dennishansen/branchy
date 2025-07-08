@@ -166,7 +166,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
 
   return (
     <div data-column-node className="flex items-start gap-4" ref={nodeRef}>
-      <div className="flex items-center gap-2 min-w-[244px] relative">
+      <div className="flex items-center gap-2 min-w-[244px] relative pt-1">
         <Textarea
           ref={textareaRef}
           value={text}
