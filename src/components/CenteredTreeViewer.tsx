@@ -67,7 +67,7 @@ const TreeContent = ({ shouldClear }: { shouldClear: number }) => {
   const shouldShowRandomTopics = !hasChildren && !state.root.hasGeneratedChildren;
 
   return (
-    <div className="p-4 mb-4">
+    <div className="px-4 pb-4 mb-4">
       <div className="relative">
         <TreeNode text={state.root.text} nodePath="root" depth={1} />
         <div className="relative">
