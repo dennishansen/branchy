@@ -28,8 +28,8 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 142.1 27.4% 85.1%;
+    --input: 142.1 27.4% 85.1%;
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
@@ -46,7 +46,7 @@
 
     --sidebar-accent-foreground: 240 5.9% 10%;
 
-    --sidebar-border: 220 13% 91%;
+    --sidebar-border: 142.1 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
@@ -76,17 +76,17 @@
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    --border: 142.1 32.6% 25.5%;
+    --input: 142.1 32.6% 25.5%;
     --ring: 212.7 26.8% 83.9%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary: 142.1 76.2% 36.3%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 120 3.7% 15.9%;
+    --sidebar-accent-foreground: 120 4.8% 95.9%;
+    --sidebar-border: 120 3.7% 15.9%;
+    --sidebar-ring: 142.1 91.2% 59.8%;
   }
 }
 
@@ -96,6 +96,18 @@
   }
 
   body {
-    @apply bg-[#F1F0FB] text-foreground min-h-screen;
+    @apply bg-[#FAFFFE] text-foreground min-h-screen;
+    font-family: "Outfit", sans-serif;
+  }
+
+  .logo-text {
+    font-family: "Outfit", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    background: linear-gradient(135deg, #16a34a 0%, #22c55e 50%, #4ade80 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
   }
 }

@@ -177,7 +177,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
         <motion.button
           onClick={handleClick}
           className={cn(
-            "p-2 rounded-lg bg-[#9b87f5] hover:bg-[#8B5CF6] text-white",
+            "p-2 rounded-lg bg-[#22c55e] hover:bg-[#16a34a] text-white",
             "flex items-center justify-center",
             "absolute right-3 top-0 bottom-0 my-auto h-8"
           )}
@@ -205,10 +205,10 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
         {isExpanded && (
           <div className="relative flex">
             {/* Vertical line */}
-            <div className="absolute left-[-25px] top-4 bottom-0 w-0.5 bg-[#9b87f5]/30 ml-4 mt-3"></div>
+            <div className="absolute left-[-25px] top-4 bottom-0 w-0.5 bg-[#22c55e]/30 ml-4 mt-3"></div>
 
             {/* Horizontal connecting line from parent */}
-            <div className="absolute left-[-32px] top-[28px] w-[7px] h-0.5 bg-[#9b87f5]/30 ml-4"></div>
+            <div className="absolute left-[-32px] top-[28px] w-[7px] h-0.5 bg-[#22c55e]/30 ml-4"></div>
 
             <motion.div
               initial={{ opacity: 0, height: 0 }}
@@ -228,7 +228,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
                   return (
                     <div key={childPath} className="relative">
                       {/* Horizontal connecting line */}
-                      <div className="absolute left-[-7px] top-[28px] w-[10px] h-0.5 bg-[#9b87f5]/30"></div>
+                      <div className="absolute left-[-7px] top-[28px] w-[10px] h-0.5 bg-[#22c55e]/30"></div>
                       <TreeNode
                         key={`node-${childPath}`}
                         text={childText}
@@ -242,12 +242,12 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
                 <div className="flex items-start gap-4" data-column-node>
                   <div className="relative">
                     {/* Horizontal connecting line */}
-                    <div className="absolute left-[-7px] top-[50%] w-[10px] h-0.5 bg-[#9b87f5]/30"></div>
+                    <div className="absolute left-[-7px] top-[50%] w-[10px] h-0.5 bg-[#22c55e]/30"></div>
                     <div className="flex items-center gap-2 min-w-[244px] relative">
                       <div className="resize-none overflow-hidden min-h-[56px] min-w-[244px] rounded-xl border border-input bg-background px-3 py-2 pr-14 text-sm text-gray-500 flex items-center">
                         Generating content...
                       </div>
-                      <div className="p-2 rounded-lg bg-[#9b87f5] text-white absolute right-3 top-0 bottom-0 my-auto h-8 flex items-center justify-center">
+                      <div className="p-2 rounded-lg bg-[#22c55e] text-white absolute right-3 top-0 bottom-0 my-auto h-8 flex items-center justify-center">
                         <Loader2 className="w-4 h-4 animate-spin" />
                       </div>
                     </div>
@@ -264,7 +264,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
                   <motion.button
                     onClick={generateMoreChildren}
                     className={cn(
-                      "p-2 rounded-lg bg-[#9b87f5] hover:bg-[#8B5CF6] text-white self-start",
+                      "p-2 rounded-lg bg-[#22c55e] hover:bg-[#16a34a] text-white self-start",
                       "flex items-center justify-center"
                     )}
                     whileHover={{ scale: 1.05 }}
@@ -283,7 +283,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
                 <motion.button
                   onClick={handleAddNode}
                   className={cn(
-                    "p-2 rounded-lg bg-[#9b87f5] hover:bg-[#8B5CF6] text-white self-start ml-0",
+                    "p-2 rounded-lg bg-[#22c55e] hover:bg-[#16a34a] text-white self-start ml-0",
                     "flex items-center justify-center"
                   )}
                   whileHover={{ scale: 1.05 }}

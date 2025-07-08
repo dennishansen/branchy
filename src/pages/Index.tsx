@@ -25,18 +25,30 @@ const Index = () => {
       <div className="max-w-[276px] w-full p-4 pb-1 flex justify-between items-center gap-2 mx-auto">
         <Dialog open={aboutOpen} onOpenChange={setAboutOpen}>
           <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-xl bg-white/90 text-gray-700 hover:bg-gray-50 font-semibold flex items-center gap-1"
-            >
-              Branchy
-              <Info className="h-3 w-3 text-gray-400" />
-            </Button>
+            <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+              <img
+                src="/logo.svg"
+                alt="Branchy Logo"
+                width="20"
+                height="20"
+                className="flex-shrink-0"
+              />
+              <span className="text-lg font-bold text-gray-900">Branchy</span>
+              <Info className="h-3 w-3 text-gray-400 ml-0.5" />
+            </div>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>About Branchy</DialogTitle>
+              <DialogTitle className="flex items-center gap-3">
+                <img
+                  src="/logo.svg"
+                  alt="Branchy Logo"
+                  width="32"
+                  height="32"
+                  className="flex-shrink-0"
+                />
+                About Branchy
+              </DialogTitle>
               <DialogDescription className="space-y-4">
                 <p>
                   Branchy is an interactive tree visualization tool that lets you explore topics by
