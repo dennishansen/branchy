@@ -28,13 +28,14 @@ Convert a parent bullet into a concise set of intuitive sub-bullets covering its
 - Identify natural subtopics from the parent bullet.
 - Ensure bullets are concise (5-7 words), clear, and focused.
 - Generate only immediate sub-bullets for the parent.
-- Before answering, infer the what the user is trying to enumerate.
 
 ## Formatting Rules
-1. Wrap each bullet with <BULLET> and </BULLET>
-2. If sub-bullets exist, enclose them within <CHILDREN> and </CHILDREN>
+1. First, wrap your interpretation of what the user wants to enumerate with <INTENT> and </INTENT>
+2. Then wrap each bullet with <BULLET> and </BULLET>
+3. If sub-bullets exist, enclose them within <CHILDREN> and </CHILDREN>
 
 Example format:
+<INTENT>The user wants to enumerate types of [specific thing]</INTENT>
 <CHILDREN>
   <BULLET>Bullet 1</BULLET>
   <BULLET>Bullet 2</BULLET>
