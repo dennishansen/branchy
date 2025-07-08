@@ -30,7 +30,7 @@ export type TreeAction =
 // Initial state
 const initialState: TreeState = {
   root: {
-    text: "Maximize the flourishing of conscious life.",
+    text: "",
     isExpanded: false,
     children: {},
     hasGeneratedChildren: false,

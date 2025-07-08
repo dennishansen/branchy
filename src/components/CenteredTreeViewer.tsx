@@ -13,12 +13,12 @@ const interestingPrompts = [
   "The future of education",
   "AI's long-term societal impact",
   "Promising ways to extend healthspan",
-  "Building compassionate economic systems",
-  "Meaningful life in the digital age",
-  "Humanity as a multi-planetary species",
-  "Strategies to address climate change",
+  "How to build compassionate economic systems",
+  "What to do in the post AGI world",
+  "Parts of the multi-planetary economy",
+  "Technical problems for solving climate change",
   "Creating beautiful, life-giving cities",
-  "Technologies transforming consciousness",
+  "Technologies for the transcendence of human consciousness",
 ];
 
 // The actual tree content component
