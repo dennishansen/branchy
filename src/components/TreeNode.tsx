@@ -172,7 +172,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ text, depth, nodePath }) => {
           value={text}
           onChange={handleInput}
           className="resize-none overflow-hidden min-h-[40px] rounded-xl border border-input bg-background px-3 py-2 pr-14 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          placeholder="Enter topic..."
+          placeholder="Enter topic to explore..."
         />
         <motion.button
           onClick={handleClick}

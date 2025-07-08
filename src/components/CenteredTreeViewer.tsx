@@ -17,7 +17,7 @@ const interestingPrompts = [
   "What to do in the post AGI world",
   "Parts of the multi-planetary economy",
   "Technical problems for solving climate change",
-  "Creating beautiful, life-giving cities",
+  "How to create beautiful, life-giving cities",
   "Technologies for the transcendence of human consciousness",
 ];
 
