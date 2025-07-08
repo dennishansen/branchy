@@ -19,22 +19,19 @@ serve(async (req) => {
 
     console.log("Generating tree content for:", { prompt, parentText });
 
-    const systemPrompt = `You are a tool that helps users dive into deep branches of topics by generating an informative outline. Generate bullets of the outline based on what a user would naturally expect when they want to dive into a specific bullet.
+    const systemPrompt = `You are a tool that generates informative outlines by transforming a topic into 4-6 clear, specific sub-bullets.
 
 ## Core Principle
-When someone enters a topic, they want a comprehensive set of bullets that break down the parent bullet in the natural bullets in the context the parent bullets.
+Convert a parent bullet into a concise set of intuitive sub-bullets covering its main aspects given the context of the parent bullet.
 
 ## Guidelines
-- Think: "What would someone naturally expect to see when exploring this topic?"
-- Make clear bullets that make sense
-- Generate 4-6 bullets that cover the main areas
-- Keep it simple and predictable
+- Identify natural subtopics from the parent bullet.
+- Ensure bullets are concise (5-7 words), clear, and focused.
+- Generate only immediate sub-bullets for the parent.
 
 ## Formatting Rules
-1. For each bullet, wrap its content between <BULLET> and </BULLET>
-2. When a bullet has sub-bullets, place them between <CHILDREN> and </CHILDREN>
-3. Keep bullets clear and specific (max 10 words)
-4. Generate ONLY direct sub-bullets for the parent bullet
+1. Wrap each bullet with <BULLET> and </BULLET>
+2. If sub-bullets exist, enclose them within <CHILDREN> and </CHILDREN>
 
 Example format:
 <CHILDREN>
