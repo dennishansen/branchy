@@ -1,4 +1,4 @@
-# <img src="public/logo.svg" alt="Branchy Logo" width="32" height="32" style="vertical-align: middle;"> Branchy
+# <img src="public/logo.svg" alt="Branchy Logo" width="32" height="32" style="vertical-align: text-bottom;"> Branchy
 
 An AI-powered tool that helps you explore any topic by creating an interactive, branching tree of ideas. Enter a topic, click to expand, and discover new subtopics as you dive deeper.
 
