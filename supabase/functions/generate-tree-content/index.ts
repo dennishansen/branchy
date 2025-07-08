@@ -1,34 +1,33 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+const openAIApiKey = Deno.env.get("OPENAI_API_KEY");
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
   // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const { prompt, parentText } = await req.json();
 
-    console.log('Generating tree content for:', { prompt, parentText });
+    console.log("Generating tree content for:", { prompt, parentText });
 
-    const systemPrompt = `You are a tool that generates logical breakdowns of topics. Your goal is to predict what a user would naturally expect when they want to explore a topic.
+    const systemPrompt = `You are a tool that helps users dive into deep branches of topics by generating an informative outline. Generate bullets of the outline based on what a user would naturally expect when they want to dive into a specific bullet.
 
 ## Core Principle
-When someone enters a topic, they want to see the most logical way to break it down - the main categories, types, or areas that naturally exist within that topic.
+When someone enters a topic, they want a comprehensive set of bullets that break down the parent bullet in the natural bullets in the context the parent bullets.
 
 ## Guidelines
 - Think: "What would someone naturally expect to see when exploring this topic?"
-- Provide the most obvious, logical subdivision
-- Use clear, specific names that immediately make sense
-- Generate 4-6 children that cover the main areas
+- Make clear bullets that make sense
+- Generate 4-6 bullets that cover the main areas
 - Keep it simple and predictable
 
 ## Formatting Rules
@@ -39,9 +38,9 @@ When someone enters a topic, they want to see the most logical way to break it d
 
 Example format:
 <CHILDREN>
-  <NODE>Logical Category 1</NODE>
-  <NODE>Logical Category 2</NODE>
-  <NODE>Logical Category 3</NODE>
+  <NODE>Bullet 1</NODE>
+  <NODE>Bullet 2</NODE>
+  <NODE>Bullet 3</NODE>
 </CHILDREN>`;
 
     // Check if the parent text contains path context (indicated by " > ")
@@ -66,21 +65,21 @@ Additional guidance: ${prompt}
 Generate the logical breakdown that someone would naturally expect when exploring "${parentText}".`;
     }
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${openAIApiKey}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: "gpt-4o-mini",
         messages: [
           {
-            role: 'system',
+            role: "system",
             content: systemPrompt,
           },
           {
-            role: 'user',
+            role: "user",
             content: userPrompt,
           },
         ],
@@ -95,16 +94,16 @@ Generate the logical breakdown that someone would naturally expect when explorin
     const data = await response.json();
     const generatedContent = data.choices[0].message.content;
 
-    console.log('Generated content:', generatedContent);
+    console.log("Generated content:", generatedContent);
 
     return new Response(JSON.stringify({ content: generatedContent }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error('Error in generate-tree-content function:', error);
+    console.error("Error in generate-tree-content function:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });
